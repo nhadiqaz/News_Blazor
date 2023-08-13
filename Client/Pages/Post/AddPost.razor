@@ -1,0 +1,75 @@
+﻿@page "/AddPost"
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 style="text-align:center;margin-top:0px;margin-bottom:0px;">خبر جدید</h1>
+            <hr style="border-color:black" />
+            <EditForm Model="@Model">
+                <div class="col-md-8">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="@nameof(Model.Title)">@(DataDictionary.Title)</label>
+                            <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="عنوان خبر"></InputText>
+                            <ValidationMessage For="()=>Model.Title"></ValidationMessage>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="@nameof(Model.ShrotDescription)">@(DataDictionary.ShrotDescription)</label>
+                        <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="شرح مختصر خبر"></InputTextArea>
+                        <ValidationMessage For="()=>Model.ShrotDescription"></ValidationMessage>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="@nameof(Model.Description)">@(DataDictionary.Description)</label>
+                        <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح خبر"></InputTextArea>
+                        <ValidationMessage For="()=>Model.Description"></ValidationMessage>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="@nameof(Model.Tags)">@(DataDictionary.Tags)</label>
+                        <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="کلید واژه ها(بین کلید واژه ها از خط فاصله استفاده کنید)"></InputTextArea>
+                        <ValidationMessage For="()=>Model.Tags"></ValidationMessage>
+                    </div>
+                    <div class="col-md-12">
+                        <br />
+                        <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Create)</button>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            تصویر خبر
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <img class="thumbnail" src="/Images/Posts/13.jpg" style="width:100%"/>
+                                <InputFile @bind-value="@Model.ImageName"></InputFile>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    #region Variables
+
+    public AddPostViewModel Model { get; set; }
+
+    #endregion \Variables
+
+
+    #region Initialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            Model = new();
+        });
+    }
+
+    #endregion \Initialized
+}

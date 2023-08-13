@@ -2,16 +2,12 @@
     <div class="post-box">
         <a href="#">
             <figure>
-                @* <img src="/site/img/290667058azer news.jpg" alt=""> *@
                 <img src="/Images/Posts/@(ImageName).jpg" alt="">
                 <figcaption class="meta-fig">
                     <span style="direction: rtl"><i class="fa fa-clock-o"></i>@(CreateDate.ToShamsi())</span>&nbsp;
                     <span><i class="fa fa-comment-o"></i> 12</span>
                 </figcaption>
                 <figcaption class="view">
-                    @* <span>بخش ویژه</span>
-                    <span>انجمن</span>
-                    <span>اتاق خبر</span> *@
                     @foreach (var tag in ListOfTags)
                     {
                         <span>@(tag)</span>

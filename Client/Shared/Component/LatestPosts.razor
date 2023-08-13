@@ -6,16 +6,24 @@
             <span class="title">آخرین مطالب</span>
         </div>
 
-        @foreach (var post in Posts)
+        @if (Posts == null)
         {
-            @* <Post Title="@(post)" /> *@
-            <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageName="@(post.ImageName)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+            <div>
+                Loading...
+            </div>
+        }
+        else
+        {
+            @foreach (var post in Posts)
+            {
+                <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageName="@(post.ImageName)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+            }
         }
 
     </div>
 </div>
 
-@code{
+@code {
 
     #region Variables
 
@@ -28,17 +36,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // await Task.Run(() =>
-        // {
-        //     Posts = new List<string>();
-
-        //     for (int i = 1; i <= 8; i++)
-        //     {
-        //         var _post = $"خبر-{i}";
-        //         Posts.Add(_post);
-        //     }
-        // });
-
         try
         {
             Posts = await PostService.GetAllPostsAsync();
@@ -47,7 +44,6 @@
         {
             throw ex;
         }
-
     }
 
     #endregion \OnInitialized

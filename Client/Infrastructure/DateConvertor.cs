@@ -13,14 +13,5 @@ namespace Client.Infrastructure
 
             return _shamsi;
         }
-        public static string ToShamsi_Reverse(this DateTime miladiDate)
-        {
-            PersianCalendar pr = new();
-
-            var _shamsiReverse =
-                $"{pr.GetDayOfMonth(miladiDate).ToString().PadLeft(2)}/{pr.GetMonth(miladiDate).ToString().PadLeft(2)}/{pr.GetYear(miladiDate).ToString().PadLeft(4)}";
-
-            return _shamsiReverse;
-        }
     }
 }
