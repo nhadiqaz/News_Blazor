@@ -1,0 +1,55 @@
+﻿@inject IPostService PostService
+
+<div class="latest-posts">
+    <div class="container-fluid">
+        <div class="blog-title-span">
+            <span class="title">آخرین مطالب</span>
+        </div>
+
+        @foreach (var post in Posts)
+        {
+            @* <Post Title="@(post)" /> *@
+            <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageName="@(post.ImageName)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+        }
+
+    </div>
+</div>
+
+@code{
+
+    #region Variables
+
+    // public List<string> Posts { get; set; }
+    public List<Post> Posts { get; set; }
+
+    #endregion \Variables
+
+    #region OnInitialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        // await Task.Run(() =>
+        // {
+        //     Posts = new List<string>();
+
+        //     for (int i = 1; i <= 8; i++)
+        //     {
+        //         var _post = $"خبر-{i}";
+        //         Posts.Add(_post);
+        //     }
+        // });
+
+        try
+        {
+            Posts = await PostService.GetAllPostsAsync();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+    }
+
+    #endregion \OnInitialized
+}
+
