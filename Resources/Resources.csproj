@@ -17,6 +17,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorMessage.resx</DependentUpon>
     </Compile>
+    <Compile Update="JavaScriptMethods.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>JavaScriptMethods.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +32,10 @@
     <EmbeddedResource Update="ErrorMessage.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorMessage.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="JavaScriptMethods.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>JavaScriptMethods.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

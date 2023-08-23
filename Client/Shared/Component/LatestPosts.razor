@@ -16,7 +16,7 @@
         {
             @foreach (var post in Posts)
             {
-                <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageName="@(post.ImageName)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+                <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
             }
         }
 
@@ -27,8 +27,7 @@
 
     #region Variables
 
-    // public List<string> Posts { get; set; }
-    public List<Post> Posts { get; set; }
+    public List<Models.Post> Posts { get; set; }
 
     #endregion \Variables
 

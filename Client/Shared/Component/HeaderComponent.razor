@@ -1,4 +1,6 @@
-﻿<div class="top-bar">
+﻿@inject ILogService LogService
+
+<div class="top-bar">
     <div class="container-fluid">
         <div class="col-md-6">
             <div class="search-btn">
@@ -38,6 +40,18 @@
                     <li><a href="#">انجمن</a></li>
                     <li><a href="#">گروه رسانه ای</a></li>
                     <li><a href="/Post/Posts">خبر ها</a></li>
+                    <li>
+                        <a href="/DisplayLogs">
+                            خطاها &nbsp;
+                            <span style="color:red">
+                                @if(LogCount!=0)
+                                {
+                                    @LogCount
+                                }
+                            </span>
+                        </a>
+                    </li>
+                    <li><a href="/AddLog">افزودن خطا</a></li>
                 </ul>
             </div>
         </div>
@@ -53,3 +67,26 @@
     </div>
 </div>
 <div class="clear-fix"></div>
+
+@code {
+
+    #region Variables
+
+    public int LogCount { get; set; }
+
+    #endregion \Variables
+
+    #region Initialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            LogCount = 0;
+        });
+
+        LogCount = await LogService.LogCountAsync();
+    }
+
+    #endregion \Initialized
+}

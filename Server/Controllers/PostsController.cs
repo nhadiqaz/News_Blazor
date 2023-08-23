@@ -1,4 +1,5 @@
 ﻿using Infrastructure;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -14,9 +15,12 @@ namespace Server.Controllers
         #region Dependency
 
         public IPostRepository PostRepository { get; }
-        public PostsController(IPostRepository postRepository)
+        public IWebHostEnvironment WebHostEnvironment { get; }
+
+        public PostsController(IPostRepository postRepository, IWebHostEnvironment webHostEnvironment)
         {
             PostRepository = postRepository;
+            WebHostEnvironment = webHostEnvironment;
         }
 
 
@@ -72,14 +76,53 @@ namespace Server.Controllers
 
                 return BadRequest(_errorMessage);
             }
+
             var _post = addPostViewModel.AddPostViewModel_ConvertTo_Post();
 
             _post = await PostRepository.AddPostAsync(_post);
 
-            return CreatedAtAction("GetPost", new {postId=_post.PostId}, _post);
+            return CreatedAtAction("GetPost", new { postId = _post.PostId }, _post);
         }
 
         #endregion \AddPost
+
+        #region GetImage
+
+        [HttpGet("{imagename}")]
+        public async Task<IActionResult> GetImage(string imageName)
+        {
+            var _filePath = Path.Combine(WebHostEnvironment.WebRootPath, "Images/Post", $"{imageName}.jpg");
+
+            byte[] _imageBytes = System.IO.File.ReadAllBytes(_filePath);
+
+            if (_imageBytes is null || _imageBytes.Length == 0)
+            {
+                return NotFound();
+            }
+
+            var _mimeType = "image/jpg";
+
+            return File(_imageBytes, _mimeType);
+        }
+
+        #endregion \GetImage
+
+        #region IsExistPost
+
+        [HttpGet("{title}")]
+        public async Task<ActionResult<bool>> IsExistPost(string title)
+        {
+            if (await PostRepository.IsExistPostAsync(title))
+            {
+                return Ok(true);
+            }
+            else
+            {
+                return Ok(false);
+            }
+        }
+
+        #endregion
 
         #endregion \Actions
     }

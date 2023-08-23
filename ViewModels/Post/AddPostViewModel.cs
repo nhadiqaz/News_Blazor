@@ -1,4 +1,5 @@
-﻿using Resources;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -44,13 +45,6 @@ namespace ViewModels
         #endregion \Description
 
         #region ImageName
-        [Required
-                    (ErrorMessageResourceType = typeof(ErrorMessage),
-                    ErrorMessageResourceName = nameof(ErrorMessage.Required))]
-        [MaxLength
-                    (100,
-                    ErrorMessageResourceType = typeof(ErrorMessage),
-                    ErrorMessageResourceName = nameof(ErrorMessage.MaxLength))]
         public string ImageName { get; set; }
 
         #endregion \ImageName

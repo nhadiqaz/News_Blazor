@@ -2,7 +2,7 @@
     <div class="post-box">
         <a href="#">
             <figure>
-                <img src="/Images/Posts/@(ImageName).jpg" alt="">
+                <img src="@(ImageUrl)" alt="">
                 <figcaption class="meta-fig">
                     <span style="direction: rtl"><i class="fa fa-clock-o"></i>@(CreateDate.ToShamsi())</span>&nbsp;
                     <span><i class="fa fa-comment-o"></i> 12</span>
@@ -36,7 +36,7 @@
     [Parameter]
     public string ShortDescription { get; set; }
     [Parameter]
-    public string ImageName { get; set; }
+    public string ImageUrl { get; set; }
     [Parameter]
     public string Tags { get; set; }
     [Parameter]

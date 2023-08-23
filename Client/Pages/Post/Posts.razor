@@ -1,22 +1,29 @@
 ﻿@page "/Post/Posts"
 
 @inject NavigationManager NavigationManager
+@inject IPostService PostService
 
-<div class="container">
-    <div class="row">
-        <div class="col" style="border:solid 2px black">
-            <h1 style="text-align:center">خبر ها</h1>
-            <hr style="border-color: black"/>
-
-            <button type="button" class="btn btn-success btn-block" @onclick="btnCreatePost_Click">@(DataDictionary.Create_Post)</button>
-
-            <br />
-            <br />
-
-            <div>
-                لیست خبر ها
+<div class="latest-posts">
+    <div class="container-fluid">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="post_content text-center">
+                <button type="button" class="btn btn-success btn-block" style="border-radius:15px;" @onclick="btnCreatePost_Click">@(DataDictionary.Create_Post)</button>
             </div>
         </div>
+    </div>
+    <hr />
+    <LatestPosts />
+    <div class="col-md-12 text-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">قبلی</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">بعدی</a></li>
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -34,4 +41,5 @@
     #endregion \btnCreatePost_Click
 
     #endregion \Events
+
 }

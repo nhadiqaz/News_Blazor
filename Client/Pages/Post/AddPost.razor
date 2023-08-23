@@ -1,75 +1,209 @@
 ﻿@page "/AddPost"
 
+@inject IPostService PostService
+@inject IJSRuntime Js
+@inject NavigationManager NavigationManager
+
+<style>
+    .validation-message {
+        color: red;
+    }
+</style>
+
+
 <div class="container">
     <div class="row">
         <div class="col">
             <h1 style="text-align:center;margin-top:0px;margin-bottom:0px;">خبر جدید</h1>
             <hr style="border-color:black" />
-            <EditForm Model="@Model">
-                <div class="col-md-8">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="@nameof(Model.Title)">@(DataDictionary.Title)</label>
-                            <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="عنوان خبر"></InputText>
-                            <ValidationMessage For="()=>Model.Title"></ValidationMessage>
+            @if (Model == null)
+            {
+                <div>
+                    Loading..
+                </div>
+            }
+            else
+            {
+                <EditForm Model="Model" OnValidSubmit="HandelSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="col-md-8" style="padding-right:0px;">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="@nameof(Model.Title)">@(DataDictionary.Title)</label>
+                                <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="عنوان خبر"></InputText>
+                                <div class="form-control-validation">
+                                    <ValidationMessage For="()=>Model.Title"></ValidationMessage>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="@nameof(Model.ShrotDescription)">@(DataDictionary.ShrotDescription)</label>
+                            <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="شرح مختصر خبر"></InputTextArea>
+                            <div class="form-control-validation">
+                                <ValidationMessage For="()=>Model.ShrotDescription"></ValidationMessage>
+                                <br />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="@nameof(Model.Description)">@(DataDictionary.Description)</label>
+                            <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح خبر"></InputTextArea>
+                            <div class="form-control-validation">
+                                <ValidationMessage For="()=>Model.Description"></ValidationMessage>
+                                <br />
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="@nameof(Model.Tags)">@(DataDictionary.Tags)</label>
+                            <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="کلید واژه ها(بین کلید واژه ها از خط فاصله استفاده کنید)"></InputTextArea>
+                            <div class="form-control-validation">
+                                <ValidationMessage For="()=>Model.Tags"></ValidationMessage>
+                                <br />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <label for="@nameof(Model.ShrotDescription)">@(DataDictionary.ShrotDescription)</label>
-                        <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="شرح مختصر خبر"></InputTextArea>
-                        <ValidationMessage For="()=>Model.ShrotDescription"></ValidationMessage>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="@nameof(Model.Description)">@(DataDictionary.Description)</label>
-                        <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح خبر"></InputTextArea>
-                        <ValidationMessage For="()=>Model.Description"></ValidationMessage>
-                    </div>
-                    <div class="col-md-8">
-                        <label for="@nameof(Model.Tags)">@(DataDictionary.Tags)</label>
-                        <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="کلید واژه ها(بین کلید واژه ها از خط فاصله استفاده کنید)"></InputTextArea>
-                        <ValidationMessage For="()=>Model.Tags"></ValidationMessage>
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                تصویر خبر
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <img class="thumbnail" src="@(ImageUrl)" style="height:200px;width:100%" />
+
+                                    @* <InputFile OnChange="HandelUplodeImage" multiple></InputFile> *@
+                                    <InputFile OnChange="HandelUplodeImage"></InputFile>
+                                </div>
+                                @* <div class="form-control-validation">
+                                    <ValidationMessage For="()=>Model.ImageName"></ValidationMessage>
+                                </div> *@
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         <br />
                         <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Create)</button>
                         <br />
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            تصویر خبر
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <img class="thumbnail" src="/Images/Posts/13.jpg" style="width:100%"/>
-                                <InputFile @bind-value="@Model.ImageName"></InputFile>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </EditForm>
+                </EditForm>
+            }
         </div>
     </div>
 </div>
 
 @code {
+
     #region Variables
 
-    public AddPostViewModel Model { get; set; }
+    public AddPostViewModel? Model { get; set; }
+    public string ImageUrl { get; set; } = "/Images/Post/Default.jpg";
+    public IBrowserFile? ImageFile { get; set; }
 
     #endregion \Variables
-
 
     #region Initialized
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Run(() =>
+        try
         {
-            Model = new();
-        });
+            await Task.Run(() =>
+            {
+                Model = new();
+            });
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
     }
 
+
     #endregion \Initialized
+
+    #region Events
+
+    #region HandelSubmit
+
+    public async void HandelSubmit()
+    {
+        try
+        {
+            if (await PostService.IsPostExistAsync(Model.Title) == false)
+            {
+                if (ImageFile is not null)
+                {
+                    #region UploadImage
+
+                    using var _content = new MultipartFormDataContent();
+
+                    var _file = ImageFile;
+
+                    var _fileContent = new StreamContent(_file.OpenReadStream(int.MaxValue));
+                    _fileContent.Headers.ContentType = new MediaTypeHeaderValue(_file.ContentType);
+
+                    _content.Add(
+                        content: _fileContent,
+                        name: "files",
+                        fileName: _file.Name);
+
+                    var _imageName = await PostService.UploadImageAsync(_content);
+
+                    Model.ImageName = _imageName;
+
+                    #endregion \UploadImage
+                }
+                else
+                {
+                    Model.ImageName = "Default";
+                }
+
+                await PostService.AddPostAsync(Model);
+
+                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage, "خبر با موفقیت ثبت شد");
+
+                NavigationManager.NavigateTo(uri: "/Post/Posts");
+            }
+            else
+            {
+                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, "این عنوان خبر در سامانه ثبت شده است");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+
+    #endregion \HandelSubmit
+
+    #region HandelUplodeImage
+
+    public async void HandelUplodeImage(InputFileChangeEventArgs e)
+    {
+        #region ShowImage
+
+        var _imageFile = e.File;
+
+        var _format = "image/jpg";
+
+        var _resizedImageFile = await _imageFile.RequestImageFileAsync(_format, 300, 300);
+        var _buffer = new byte[_resizedImageFile.Size];
+
+        await _resizedImageFile.OpenReadStream().ReadAsync(_buffer);
+
+        var _base64Image = Convert.ToBase64String(_buffer);
+
+        ImageUrl = $"data:{_format};base64,{_base64Image}";
+
+        this.StateHasChanged();
+
+        #endregion \ShowImage
+
+        ImageFile = e.File;
+    }
+
+    #endregion \HandelUplodeImage
+
+    #endregion \Events
 }

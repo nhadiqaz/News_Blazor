@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,5 +25,8 @@ namespace Models
         public string ImageName { get; set; }
         public string Tags { get; set; }
         public DateTime CreateDate { get; set; }
+
+        [NotMapped]
+        public string ImageUrl { get; set; }
     }
 }

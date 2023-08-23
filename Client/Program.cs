@@ -18,6 +18,7 @@ builder.Services.AddScoped(sp => new HttpClient {
 #region CustomServices
 
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddSingleton<ILogService, LogService>();
 
 #endregion \CustomServices
 
