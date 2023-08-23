@@ -19,7 +19,6 @@
                 <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
             }
         }
-
     </div>
 </div>
 
@@ -28,6 +27,7 @@
     #region Variables
 
     public List<Models.Post> Posts { get; set; }
+    private int _index = 1;
 
     #endregion \Variables
 

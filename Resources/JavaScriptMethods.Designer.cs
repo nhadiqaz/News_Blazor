@@ -70,11 +70,20 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ShowSuccessfullyMessage.
+        ///   Looks up a localized string similar to ShowSuccessfullyMessage_SweetAlert.
         /// </summary>
-        public static string ShowSuccessfullyMessage {
+        public static string ShowSuccessfullyMessage_SweetAlert {
             get {
-                return ResourceManager.GetString("ShowSuccessfullyMessage", resourceCulture);
+                return ResourceManager.GetString("ShowSuccessfullyMessage_SweetAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ShowSuccessfullyMessage_Toastr.
+        /// </summary>
+        public static string ShowSuccessfullyMessage_Toastr {
+            get {
+                return ResourceManager.GetString("ShowSuccessfullyMessage_Toastr", resourceCulture);
             }
         }
     }

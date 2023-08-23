@@ -121,19 +121,37 @@
     <value>افزودن</value>
   </data>
   <data name="Counter" xml:space="preserve">
-    <value>#</value>
+    <value>شماره</value>
   </data>
   <data name="Create" xml:space="preserve">
     <value>ثبت</value>
   </data>
+  <data name="CreateDate" xml:space="preserve">
+    <value>تاریخ ثبت</value>
+  </data>
   <data name="Create_Post" xml:space="preserve">
     <value>افزودن خبر جدید</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>شرح</value>
   </data>
+  <data name="Details" xml:space="preserve">
+    <value>جزئیات</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>تصویر</value>
+  </data>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>دستورات</value>
   </data>
   <data name="ShrotDescription" xml:space="preserve">
     <value>شرح مختصر</value>

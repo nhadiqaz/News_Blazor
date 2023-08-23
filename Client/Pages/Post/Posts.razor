@@ -13,7 +13,53 @@
         </div>
     </div>
     <hr />
-    <LatestPosts />
+    @* <LatestPosts /> *@
+
+    @if (ListOfPosts == null)
+    {
+        <div>
+            Loading...
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>@(DataDictionary.Counter)</th>
+                        <th>@(DataDictionary.Image)</th>
+                        <th>@(DataDictionary.Title)</th>
+                        <th>@(DataDictionary.ShrotDescription)</th>
+                        <th>@(DataDictionary.Tags)</th>
+                        <th>@(DataDictionary.CreateDate)</th>
+                        <th>@(DataDictionary.Orders)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var post in ListOfPosts)
+                    {
+                        <tr>
+                            <td>@(_index++)</td>
+                            <td>
+                                <img src="@(post.ImageUrl)" style="width:100px;height:100px">
+                            </td>
+                            <td>@(post.Title)</td>
+                            <td>@(post.ShortDescription)</td>
+                            <td>@(post.Tags)</td>
+                            <td>@(post.CreateDate.ToShamsi())</td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm">@(DataDictionary.Details)</button> &nbsp;
+                                <button type="button" class="btn btn-warning btn-sm">@(DataDictionary.Edit)</button> &nbsp;
+                                <button type="button" class="btn btn-danger btn-sm">@(DataDictionary.Delete)</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
     <div class="col-md-12 text-center">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
@@ -28,6 +74,29 @@
 </div>
 
 @code {
+
+    #region Variables
+
+    public List<Models.Post>? ListOfPosts { get; set; }
+    private int _index = 1;
+
+    #endregion \Variables
+
+    #region OnInitialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ListOfPosts = await PostService.GetAllPostsAsync();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    #endregion \OnInitialized
 
     #region Events
 

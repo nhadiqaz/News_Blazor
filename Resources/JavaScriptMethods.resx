@@ -120,7 +120,10 @@
   <data name="ShowErrorMessage" xml:space="preserve">
     <value>ShowErrorMessage</value>
   </data>
-  <data name="ShowSuccessfullyMessage" xml:space="preserve">
-    <value>ShowSuccessfullyMessage</value>
+  <data name="ShowSuccessfullyMessage_SweetAlert" xml:space="preserve">
+    <value>ShowSuccessfullyMessage_SweetAlert</value>
+  </data>
+  <data name="ShowSuccessfullyMessage_Toastr" xml:space="preserve">
+    <value>ShowSuccessfullyMessage_Toastr</value>
   </data>
 </root>

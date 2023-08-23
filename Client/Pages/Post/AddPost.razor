@@ -71,12 +71,8 @@
                                 <div class="form-group">
                                     <img class="thumbnail" src="@(ImageUrl)" style="height:200px;width:100%" />
 
-                                    @* <InputFile OnChange="HandelUplodeImage" multiple></InputFile> *@
                                     <InputFile OnChange="HandelUplodeImage"></InputFile>
                                 </div>
-                                @* <div class="form-control-validation">
-                                    <ValidationMessage For="()=>Model.ImageName"></ValidationMessage>
-                                </div> *@
                             </div>
                         </div>
                     </div>
@@ -160,7 +156,8 @@
 
                 await PostService.AddPostAsync(Model);
 
-                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage, "خبر با موفقیت ثبت شد");
+                // await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, "خبر با موفقیت ثبت شد");
+                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "خبر با موفقیت ثبت شد");
 
                 NavigationManager.NavigateTo(uri: "/Post/Posts");
             }
