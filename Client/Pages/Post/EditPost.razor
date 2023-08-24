@@ -1,4 +1,4 @@
-﻿@page "/Post/AddPost"
+﻿@page "/Post/EditPost/{postId:int}"
 
 @inject IPostService PostService
 @inject IJSRuntime Js
@@ -14,7 +14,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 style="text-align:center;margin-top:0px;margin-bottom:0px;">خبر جدید</h1>
+            <h1 style="text-align:center;margin-top:0px;margin-bottom:0px;">ویرایش خبر</h1>
             <hr style="border-color:black" />
             @if (Model == null)
             {
@@ -69,7 +69,7 @@
                             </div>
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <img class="thumbnail" src="@(ImageUrl)" style="height:200px;width:100%" />
+                                    <img class="thumbnail" src="@(Model.ImageUrl)" style="height:200px;width:100%" />
 
                                     <InputFile OnChange="HandelUplodeImage"></InputFile>
                                 </div>
@@ -89,10 +89,17 @@
 
 @code {
 
+    #region Parameters
+
+    [Parameter]
+    public int PostId { get; set; }
+
+    #endregion \Parameters
+
     #region Variables
 
-    public AddPostViewModel? Model { get; set; }
-    public string ImageUrl { get; set; } = "/Images/Post/Default.jpg";
+    public EditPostViewModel? Model { get; set; }
+    // public string ImageUrl { get; set; } = "/Images/Post/Default.jpg";
     public IBrowserFile? ImageFile { get; set; }
 
     #endregion \Variables
@@ -103,17 +110,13 @@
     {
         try
         {
-            await Task.Run(() =>
-            {
-                Model = new();
-            });
+            Model = await PostService.GetPostAsync(PostId);
         }
         catch (Exception ex)
         {
             await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, ex.Message);
         }
     }
-
 
     #endregion \Initialized
 
@@ -125,46 +128,36 @@
     {
         try
         {
-            if (await PostService.IsPostExistAsync(Model.Title) == false)
+            if (ImageFile is not null)
             {
-                if (ImageFile is not null)
-                {
-                    #region UploadImage
+                #region UploadImage
 
-                    using var _content = new MultipartFormDataContent();
+                using var _content = new MultipartFormDataContent();
 
-                    var _file = ImageFile;
+                var _file = ImageFile;
 
-                    var _fileContent = new StreamContent(_file.OpenReadStream(int.MaxValue));
-                    _fileContent.Headers.ContentType = new MediaTypeHeaderValue(_file.ContentType);
+                var _fileContent = new StreamContent(_file.OpenReadStream(int.MaxValue));
+                _fileContent.Headers.ContentType = new MediaTypeHeaderValue(_file.ContentType);
 
-                    _content.Add(
-                        content: _fileContent,
-                        name: "files",
-                        fileName: _file.Name);
+                _content.Add(
+                    content: _fileContent,
+                    name: "files",
+                    fileName: _file.Name);
 
-                    var _imageName = await PostService.UploadImageAsync(_content);
+                await PostService.DeleteImageAsync(Model.ImageName);
 
-                    Model.ImageName = _imageName;
+                var _imageName = await PostService.UploadImageAsync(_content);
 
-                    #endregion \UploadImage
-                }
-                else
-                {
-                    Model.ImageName = "Default";
-                }
+                Model.ImageName = _imageName;
 
-                await PostService.AddPostAsync(Model);
-
-                // await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, "خبر با موفقیت ثبت شد");
-                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "خبر با موفقیت ثبت شد");
-
-                NavigationManager.NavigateTo(uri: "/Post/Posts");
+                #endregion \UploadImage
             }
-            else
-            {
-                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, "این عنوان خبر در سامانه ثبت شده است");
-            }
+
+            await PostService.UpdatePostAsync(PostId, Model);
+
+            await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "خبر با موفقیت ویرایش شد");
+
+            NavigationManager.NavigateTo(uri: "/Post/Posts");
         }
         catch (Exception ex)
         {
@@ -191,7 +184,7 @@
 
         var _base64Image = Convert.ToBase64String(_buffer);
 
-        ImageUrl = $"data:{_format};base64,{_base64Image}";
+        Model.ImageUrl = $"data:{_format};base64,{_base64Image}";
 
         this.StateHasChanged();
 

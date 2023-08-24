@@ -8,10 +8,10 @@ namespace Server.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UploadsController : ControllerBase
+    public class FilesController : ControllerBase
     {
         public IWebHostEnvironment WebHostEnvironment { get; }
-        public UploadsController(IWebHostEnvironment webHostEnvironment)
+        public FilesController(IWebHostEnvironment webHostEnvironment)
         {
             WebHostEnvironment = webHostEnvironment;
         }
@@ -39,6 +39,19 @@ namespace Server.Controllers
                 await Console.Out.WriteLineAsync(ex.Message);
                 throw ex;
             }
+        }
+
+        [HttpDelete("{imageName}")]
+        public async Task<ActionResult> DeleteImage(string imageName)
+        {
+            var _path = Path.Combine(WebHostEnvironment.WebRootPath, $"Images/Post/{imageName}.jpg");
+
+            if (System.IO.File.Exists(_path))
+            {
+                System.IO.File.Delete(_path);
+            }
+
+            return Ok("Delete image is successfully");
         }
     }
 }

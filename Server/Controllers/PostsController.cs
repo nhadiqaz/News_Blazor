@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repositories;
+using Resources;
 using ViewModels;
 
 namespace Server.Controllers
@@ -69,7 +70,7 @@ namespace Server.Controllers
 
             if (await PostRepository.IsExistPostAsync(addPostViewModel.Title) == true)
             {
-                var _errorMessage = new ErrroMessageViewModel
+                var _errorMessage = new ErrorMessageViewModel
                 {
                     Message = "This Post is exist"
                 };
@@ -85,6 +86,27 @@ namespace Server.Controllers
         }
 
         #endregion \AddPost
+
+        #region UpdatePost
+
+        [HttpPatch("{postId}")]
+        public async Task<ActionResult<Post>> UpdatePost(int postId, EditPostViewModel editPostViewModel)
+        {
+            if (await PostRepository.IsExistPostAsync(postId) == false)
+            {
+                return NotFound();
+            }
+            if (TryValidateModel(editPostViewModel) == false)
+            {
+                BadRequest();
+            }
+
+            var _post = await PostRepository.UpdatePostAsync(postId, editPostViewModel);
+
+            return CreatedAtAction("GetPost", new { postId = _post.PostId }, _post);
+        }
+
+        #endregion \UpdatePost
 
         #region GetImage
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ViewModels
 {
-    public class ErrroMessageViewModel
+    public class ErrorMessageViewModel
     {
         public string Message { get; set; }
     }

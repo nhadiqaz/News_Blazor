@@ -2,6 +2,7 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using ViewModels;
 
 namespace Repositories
 {
@@ -63,12 +64,50 @@ namespace Repositories
             }
             catch (Exception ex)
             {
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw ex;
             }
         }
 
 
         #endregion \AddPostAsync
+
+        #region UpdatePostAsync
+
+        public async Task<Post> UpdatePostAsync(int postId, EditPostViewModel editPostViewModel)
+        {
+            try
+            {
+                var _post = await GetPostAsync(postId);
+
+                if (_post is null)
+                {
+                    return null;
+                }
+
+                await Task.Run(() =>
+                {
+                    _post.Title = editPostViewModel.Title;
+                    _post.ShortDescription = editPostViewModel.ShrotDescription;
+                    _post.Description = editPostViewModel.Description;
+                    _post.ImageName = editPostViewModel.ImageName;
+                    _post.Tags = editPostViewModel.Tags;
+
+                    Context.Posts.Update(_post);
+                });
+
+                await Context.SaveChangesAsync();
+
+                return _post;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw ex;
+            }
+        }
+
+        #endregion \UpdatePostAsync
 
         #region IsExistPostAsync
 
@@ -81,9 +120,25 @@ namespace Repositories
             }
             catch (Exception ex)
             {
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw ex;
             }
         }
+
+        public async Task<bool> IsExistPostAsync(int postId)
+        {
+            try
+            {
+                return await Context.Posts
+                                    .AnyAsync(p=>p.PostId==postId);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw ex;
+            }
+        }
+
         #endregion IsExistPostAsync
 
         #endregion \Methods

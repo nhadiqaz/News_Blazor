@@ -1,6 +1,7 @@
 ﻿using Client;
 using Client.Shared.Component;
 using Generator;
+using Infrastructure;
 using Microsoft.AspNetCore.Components.Forms;
 using Models;
 using Resources;
@@ -51,6 +52,31 @@ namespace Services
 
         #endregion \GetAllPosts
 
+        #region GetPost
+
+        public async Task<EditPostViewModel> GetPostAsync(int postId)
+        {
+            try
+            {
+                var _response = await HttpClient.GetFromJsonAsync<Models.Post>(requestUri: $"api/Posts/GetPost/{postId}");
+
+                var _postViewModel = _response.Post_ConvertTo_EditPostViewModel();
+
+                _postViewModel.ImageUrl = await GetImageUrlAsync(_postViewModel.ImageName);
+
+                return _postViewModel;
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \GetPost
+
         #region AddPost
 
         public async Task AddPostAsync(AddPostViewModel addPostViewModel)
@@ -80,9 +106,10 @@ namespace Services
         {
             try
             {
-                var _response = await HttpClient.PostAsync("api/Uploads/UploadImage", content);
+                var _response = await HttpClient.PostAsync("api/Files/UploadImage", content);
 
                 var _content = await _response.Content.ReadAsStringAsync();
+
                 return _content;
             }
             catch (Exception ex)
@@ -138,7 +165,7 @@ namespace Services
 
         #endregion \GetImageUrl
 
-        #region IsPostExistAsync
+        #region IsPostExist
 
         public async Task<bool> IsPostExistAsync(string title)
         {
@@ -169,7 +196,52 @@ namespace Services
                 throw new Exception(ex.Message);
             }
         }
-        #endregion
+
+        #endregion \IsPostExist
+
+        #region DeleteImage
+
+        public async Task DeleteImageAsync(string imageName)
+        {
+            try
+            {
+                await HttpClient.DeleteAsync(requestUri: $"api/Files/DeleteImage/{imageName}");
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+
+                throw new Exception(ex.Message); 
+            }
+        }
+
+        #endregion \DeleteImage
+
+        #region UpdatePost
+
+        public async Task UpdatePostAsync(int postId, EditPostViewModel editPostViewModel)
+        {
+            try
+            {
+                var _response = await HttpClient.PatchAsJsonAsync<EditPostViewModel>(requestUri: $"api/Posts/UpdatePost/{postId}", editPostViewModel);
+
+                if (_response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var _message = await _response.Content.ReadAsStringAsync();
+                    throw new Exception(_message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \UpdatePost
 
         #endregion \Methods
     }
