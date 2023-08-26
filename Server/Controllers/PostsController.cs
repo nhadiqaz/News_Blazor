@@ -108,6 +108,22 @@ namespace Server.Controllers
 
         #endregion \UpdatePost
 
+        #region DeletePost
+
+        [HttpDelete("{postId}")]
+        public async Task<ActionResult> DeletePost(int postId)
+        {
+            if (await PostRepository.IsExistPostAsync(postId) is false)
+            {
+                return NotFound();
+            }
+
+            await PostRepository.DeletePostAsync(postId);
+
+            return Ok("Delete is Successfully");
+        }
+        #endregion \DeletePost
+
         #region GetImage
 
         [HttpGet("{imagename}")]
@@ -145,6 +161,30 @@ namespace Server.Controllers
         }
 
         #endregion
+
+        #region GetImageName
+
+        [HttpGet("{postId}")]
+        public async Task<ActionResult<string>> GetImageName(int postId)
+        {
+            try
+            {
+                if (await PostRepository.IsExistPostAsync(postId) is false)
+                {
+                    return NotFound();
+                }
+
+                var _imageName = await PostRepository.GetImageName(postId);
+
+                return Ok(_imageName);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion \GetImageName
 
         #endregion \Actions
     }

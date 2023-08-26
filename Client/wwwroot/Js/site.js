@@ -15,5 +15,26 @@ function ShowSuccessfullyMessage_SweetAlert(message) {
 }
 
 function ShowSuccessfullyMessage_Toastr(message) {
-    toastr.success('',message, { timeOut: 2000 })
+    toastr.success('', message, { timeOut: 2000 })
+}
+
+async function ShowDeleteMessage(title, message) {
+    var result =await Swal.fire({
+        title: title,
+        text: message,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#878787',
+        confirmButtonText: 'بلی',
+        cancelButtonText: 'خیر',
+    })
+
+    console.log('Result:', result); // Debugging line
+
+    if (result.isConfirmed) {
+        return true;
+    } else {
+        return false;
+    }
 }

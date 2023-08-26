@@ -243,6 +243,45 @@ namespace Services
 
         #endregion \UpdatePost
 
+        #region DeletePostAsync
+
+        public async Task DeletePostAsync(int postId)
+        {
+            try
+            {
+                await HttpClient.DeleteAsync(requestUri: $"api/Posts/DeletePost/{postId}");
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+            }
+        }
+
+        #endregion \DeletePostAsync
+
+        #region GetImageNameAsync
+
+        public async Task<string> GetImageNameAsync(int postId)
+        {
+            try
+            {
+                var _response = await HttpClient.GetStringAsync(requestUri: $"api/Posts/GetImageName/{postId}");
+
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \GetImageNameAsync
+
+
         #endregion \Methods
     }
 }

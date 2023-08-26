@@ -1,5 +1,6 @@
 ﻿
 using Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using ViewModels;
@@ -130,7 +131,7 @@ namespace Repositories
             try
             {
                 return await Context.Posts
-                                    .AnyAsync(p=>p.PostId==postId);
+                                    .AnyAsync(p => p.PostId == postId);
             }
             catch (Exception ex)
             {
@@ -140,6 +141,45 @@ namespace Repositories
         }
 
         #endregion IsExistPostAsync
+
+        #region DeletePostAsync
+
+        public async Task DeletePostAsync(int postId)
+        {
+            try
+            {
+                var _post = await GetPostAsync(postId);
+
+                await Task.Run(() =>
+                {
+                    Context.Posts.Remove(_post);
+                });
+
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \DeletePostAsync
+
+        #region GetImageName
+
+        public async Task<string> GetImageName(int postId)
+        {
+            var _imageName = Context.Posts
+                                    .Where(p => p.PostId == postId)
+                                    .Select(p => p.ImageName)
+                                    .SingleOrDefault();
+
+            return _imageName;
+        }
+
+        #endregion \GetImageName
+
 
         #endregion \Methods
     }

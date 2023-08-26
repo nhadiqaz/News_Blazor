@@ -2,6 +2,7 @@
 
 @inject NavigationManager NavigationManager
 @inject IPostService PostService
+@inject IJSRuntime Js
 
 <div class="latest-posts">
     <div class="container-fluid">
@@ -14,17 +15,17 @@
     </div>
     <hr />
 
-    @if (ListOfPosts == null)
-    {
-        <div>
-            Loading...
-        </div>
-    }
-    else
-    {
-        <div class="container">
-            <div class="row">
-                <div class="col table-responsive">
+    <div class="container">
+        <div class="row">
+            <div class="col table-responsive">
+                @if (ListOfPosts == null)
+                {
+                    <div>
+                        Loading...
+                    </div>
+                }
+                else
+                {
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
@@ -52,16 +53,16 @@
                                     <td>
                                         <button type="button" class="btn btn-info btn-block btn-sm">@(DataDictionary.Details)</button>
                                         <button type="button" class="btn btn-warning btn-block btn-sm" @onclick="()=>btnEdit_Click(post.PostId)">@(DataDictionary.Edit)</button>
-                                        <button type="button" class="btn btn-danger btn-block btn-sm">@(DataDictionary.Delete)</button>
+                                        <button type="button" class="btn btn-danger btn-block btn-sm" @onclick="()=>btnDelete_Click(post.PostId)">@(DataDictionary.Delete)</button>
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
-                </div>
+                }
             </div>
         </div>
-    }
+    </div>
 
     <div class="col-md-12 text-center">
         <nav aria-label="Page navigation example">
@@ -82,7 +83,6 @@
 
     public List<Models.Post>? ListOfPosts { get; set; }
     private int _index = 1;
-
     #endregion \Variables
 
     #region OnInitialized
@@ -120,6 +120,32 @@
     }
 
     #endregion \btnEdit_Click
+
+    #region btnDelete_Click
+
+    public async Task btnDelete_Click(int postId)
+    {
+        _index = 1;
+
+        var _result = await Js.InvokeAsync<bool>(identifier: "ShowDeleteMessage", "خبر حذف شود؟", "مایل به حذف خبر مورد نظر هستید؟");
+
+        if (_result == true)
+        {
+            var _post = ListOfPosts.Find(p=>p.PostId==postId);
+
+            await PostService.DeleteImageAsync(_post.ImageName);
+
+            await PostService.DeletePostAsync(postId);
+
+            ListOfPosts.Remove(_post);
+            
+            await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, "عملیات حدف انجام شد");
+        }
+
+        _index = 1;
+    }
+
+    #endregion \btnDelete_Click
 
     #endregion \Events
 
