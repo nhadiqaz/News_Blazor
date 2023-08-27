@@ -1276,3 +1276,7 @@ li:focus {
 .not_found span {
 	font-size: 60px;
 }
+
+.ck-content{
+	min-height:200px;
+}

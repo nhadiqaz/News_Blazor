@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-12">
                             <label for="@nameof(Model.ShrotDescription)">@(DataDictionary.ShrotDescription)</label>
-                            <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="شرح مختصر خبر"></InputTextArea>
+                            <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="..."></InputTextArea>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.ShrotDescription"></ValidationMessage>
                                 <br />
@@ -47,7 +47,8 @@
                         </div>
                         <div class="col-md-12">
                             <label for="@nameof(Model.Description)">@(DataDictionary.Description)</label>
-                            <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح خبر"></InputTextArea>
+                            @* <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="..."></InputTextArea> *@
+                            <CKEditorBlazor Id="@nameof(Model.Description)" @bind-Value="Model.Description" placeholder="..."></CKEditorBlazor>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.Description"></ValidationMessage>
                                 <br />
@@ -78,7 +79,7 @@
                     </div>
                     <div class="col-md-12">
                         <br />
-                        <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Create)</button>
+                        <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Edit)</button>
                         <br />
                     </div>
                 </EditForm>

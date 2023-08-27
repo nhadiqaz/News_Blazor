@@ -30,7 +30,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="@nameof(Model.Title)">@(DataDictionary.Title)</label>
-                                <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="عنوان خبر"></InputText>
+                                <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="..."></InputText>
                                 <div class="form-control-validation">
                                     <ValidationMessage For="()=>Model.Title"></ValidationMessage>
                                     <br />
@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-12">
                             <label for="@nameof(Model.ShrotDescription)">@(DataDictionary.ShrotDescription)</label>
-                            <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="شرح مختصر خبر"></InputTextArea>
+                            <InputTextArea id="@nameof(Model.ShrotDescription)" class="form-control" @bind-Value="@Model.ShrotDescription" placeholder="..."></InputTextArea>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.ShrotDescription"></ValidationMessage>
                                 <br />
@@ -47,7 +47,8 @@
                         </div>
                         <div class="col-md-12">
                             <label for="@nameof(Model.Description)">@(DataDictionary.Description)</label>
-                            <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح خبر"></InputTextArea>
+                            @* <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح"></InputTextArea> *@
+                            <CKEditorBlazor Id="@nameof(Model.Description)" @bind-Value="@(Model.Description)" placeholder="..."></CKEditorBlazor>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.Description"></ValidationMessage>
                                 <br />
@@ -55,7 +56,7 @@
                         </div>
                         <div class="col-md-8">
                             <label for="@nameof(Model.Tags)">@(DataDictionary.Tags)</label>
-                            <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="کلید واژه ها(بین کلید واژه ها از خط فاصله استفاده کنید)"></InputTextArea>
+                            <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="بین کلید واژه ها از خط فاصله استفاده کنید"></InputTextArea>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.Tags"></ValidationMessage>
                                 <br />

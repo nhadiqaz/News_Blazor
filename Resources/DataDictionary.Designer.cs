@@ -178,7 +178,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to کلیدواژه ها.
+        ///   Looks up a localized string similar to کلید واژه ها.
         /// </summary>
         public static string Tags {
             get {
