@@ -1,0 +1,20 @@
+﻿@inject NavigationManager NavigationManager
+
+<Login ReturnUrl="@ReturnUrl" />
+
+@code {
+
+    public string ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            var _url = NavigationManager.Uri;
+
+            var _baseUrl = NavigationManager.BaseUri;
+
+            ReturnUrl = _url.Replace(_baseUrl, "");
+        });
+    }
+}

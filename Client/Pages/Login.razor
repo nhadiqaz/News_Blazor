@@ -1,0 +1,106 @@
+﻿@page "/Login/{ReturnUrl}"
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService LocalStorageService
+@inject IAutenticationService AutenticationService
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+
+
+<div style="text-align:center">
+    <h3>ورود</h3>
+</div>
+
+<hr style="border-top-color:black" />
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            @if (Model is null)
+            {
+                <div>
+                    Loading...
+                </div>
+            }
+            else
+            {
+                <EditForm Model="Model" OnValidSubmit="HandelSubmit">
+                    @* <DataAnnotationsValidator></DataAnnotationsValidator> *@
+                    <div class="form-group" style="padding-right:250px">
+                        <div class="col-md-8">
+                            <div class="col-12">
+                                <label for="@(nameof(Model.UserName))">@(DataDictionary.Username)</label>
+                                <InputText id="@(nameof(Model.UserName))" class="form-control" @bind-Value="Model.UserName" placeholder="..."></InputText>
+                                <div class="form-control-validation">
+                                    <ValidationMessage For="()=>Model.UserName"></ValidationMessage>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="@(nameof(Model.Password))">@(DataDictionary.LogIn)</label>
+                                <InputText id="@(nameof(Model.Password))" class="form-control" @bind-Value="Model.Password" type="password" placeholder="..."></InputText>
+                                <div class="form-control-validation">
+                                    <ValidationMessage For="()=>Model.Password"></ValidationMessage>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-block">@(DataDictionary.Password)</button>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    #region Parameter
+
+    [Parameter]
+    public string? ReturnUrl { get; set; }
+
+    #endregion \Parameter
+
+    #region Properties
+
+    public UserViewModel Model { get; set; } = new UserViewModel();
+
+    #endregion \Properties
+
+    #region Events
+
+    #region HandelSubmit
+
+    public async Task HandelSubmit()
+    {
+        try
+        {
+            var _token = await AutenticationService.GetTokenAsync(userViewModel: Model);
+
+            await LocalStorageService.SetItemAsync(key: "token", _token);
+
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            if (ReturnUrl is null)
+            {
+                NavigationManager.NavigateTo(uri: "/");
+            }
+            else
+            {
+                NavigationManager.NavigateTo(uri: ReturnUrl);
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+
+    #endregion \HandelSubmit
+
+    #endregion \Events
+}

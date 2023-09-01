@@ -1,4 +1,5 @@
 ﻿using Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace Server.Controllers
         #region Actions
 
         #region GetAllPosts
-
+        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<List<Post>>> GetAllPosts()
         {

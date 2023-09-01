@@ -4,6 +4,16 @@
 @inject IPostService PostService
 @inject IJSRuntime Js
 
+@attribute [Authorize]
+
+@* <AuthorizeView>
+    <NotAuthorized>
+        <p>شما اجازه دسترسی به این صفحه را ندارید</p>
+    </NotAuthorized>
+    <Authorized>
+    </Authorized>
+</AuthorizeView> *@
+
 <div class="latest-posts">
     <div class="container-fluid">
         <div class="col-md-2"></div>
@@ -131,14 +141,14 @@
 
         if (_result == true)
         {
-            var _post = ListOfPosts.Find(p=>p.PostId==postId);
+            var _post = ListOfPosts.Find(p => p.PostId == postId);
 
             await PostService.DeleteImageAsync(_post.ImageName);
 
             await PostService.DeletePostAsync(postId);
 
             ListOfPosts.Remove(_post);
-            
+
             await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, "عملیات حدف انجام شد");
         }
 

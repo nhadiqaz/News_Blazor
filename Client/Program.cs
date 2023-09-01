@@ -1,4 +1,8 @@
+using Blazored.LocalStorage;
 using Client;
+using Client.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Services;
@@ -18,9 +22,19 @@ builder.Services.AddScoped(sp => new HttpClient {
 #region CustomServices
 
 builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddSingleton<ILogService, LogService>();
+builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IAutenticationService, AutenticationService>();
 
 #endregion \CustomServices
+
+#region Authentication
+
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddBlazoredLocalStorage();
+//builder.Services.AddApiAuthorization();
+
+#endregion \Authentication
 
 
 

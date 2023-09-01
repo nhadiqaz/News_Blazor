@@ -2,8 +2,10 @@
 
 using Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Repositories;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,22 @@ builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 #endregion \Repositories
 
+#region JWt
+
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new()
+    {
+        ValidateIssuer=true,
+        ValidateAudience=true,
+        ValidateIssuerSigningKey=true,
+        ValidIssuer = builder.Configuration["Authentication:Issuer"],
+        ValidAudience = builder.Configuration["Authentication:Audience"],
+        IssuerSigningKey=new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"])),
+    };
+});
+
+#endregion \JWt
 
 #endregion \Services
 
@@ -46,6 +64,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(policy =>
 {
     policy.WithOrigins("https://localhost:7063/", "http://localhost:7063/")
+    .AllowAnyHeader()
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType);
@@ -53,6 +72,8 @@ app.UseCors(policy =>
 
 app.UseHttpsRedirection();
 
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

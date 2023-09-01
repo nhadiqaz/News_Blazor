@@ -1,4 +1,6 @@
-﻿@inject ILogService LogService
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
 
 <div class="top-bar">
     <div class="container-fluid">
@@ -15,6 +17,17 @@
                             <li><a href="#">تماس با ما</a></li>
                             <li><a href="#">درباره ما</a></li>
                             <li><a href="#">مقالات</a></li>
+                            <AuthorizeView>
+                                <Authorized>
+                                    <li><a>@(context.User.FindFirst("UserName").Value)</a></li>
+                                    <li>
+                                        <a href="#" @onclick="btnLogOut_Click">خروج</a>
+                                    </li>
+                                </Authorized>
+                                <NotAuthorized>
+                                    <li><a href="/Login">ورود</a></li>
+                                </NotAuthorized>
+                            </AuthorizeView>
                         </ul>
                     </div>
                 </div>
@@ -40,18 +53,8 @@
                     <li><a href="#">انجمن</a></li>
                     <li><a href="#">گروه رسانه ای</a></li>
                     <li><a href="/Post/Posts">خبر ها</a></li>
-                    <li>
-                        <a href="/DisplayLogs">
-                            خطاها &nbsp;
-                            <span style="color:red">
-                                @if(LogCount!=0)
-                                {
-                                    @LogCount
-                                }
-                            </span>
-                        </a>
-                    </li>
                     <li><a href="/AddLog">افزودن خطا</a></li>
+                    <li><a href="/DisplayLogs"> خطا ها</a></li>
                 </ul>
             </div>
         </div>
@@ -70,23 +73,31 @@
 
 @code {
 
-    #region Variables
 
-    public int LogCount { get; set; }
+    #region Events
 
-    #endregion \Variables
-
-    #region Initialized
-
-    protected override async Task OnInitializedAsync()
+    public async Task btnLogOut_Click()
     {
+        string? _returnUrl = null ;
+
         await Task.Run(() =>
         {
-            LogCount = 0;
+            var _url = NavigationManager.Uri;
+
+            var _baseUrl = NavigationManager.BaseUri;
+
+            _returnUrl = _url.Replace(_baseUrl, "");
         });
 
-        LogCount = await LogService.LogCountAsync();
+
+        await LocalStorageService.RemoveItemAsync(key: "token");
+        await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (_returnUrl is not null)
+        {
+            NavigationManager.NavigateTo(uri: _returnUrl);
+        }
     }
 
-    #endregion \Initialized
+    #endregion \Events
 }
