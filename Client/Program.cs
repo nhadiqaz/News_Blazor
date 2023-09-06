@@ -29,10 +29,9 @@ builder.Services.AddScoped<IAutenticationService, AutenticationService>();
 
 #region Authentication
 
+builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddBlazoredLocalStorage();
-//builder.Services.AddApiAuthorization();
 
 #endregion \Authentication
 

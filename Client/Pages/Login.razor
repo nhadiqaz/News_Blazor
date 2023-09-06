@@ -1,10 +1,12 @@
-﻿@page "/Login/{ReturnUrl}"
+﻿@page "/Login"
+@page "/Login/{ReturnUrl}"
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ILocalStorageService LocalStorageService
-@inject IAutenticationService AutenticationService
-@inject IJSRuntime JS
+
 @inject NavigationManager NavigationManager
+@inject IAutenticationService AutenticationService
+@inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JS
 
 
 <div style="text-align:center">
@@ -65,11 +67,27 @@
 
     #endregion \Parameter
 
+
     #region Properties
 
-    public UserViewModel Model { get; set; } = new UserViewModel();
+    public UserLogInViewModel Model { get; set; } = new UserLogInViewModel();
 
     #endregion \Properties
+
+
+    #region Initialized
+
+    protected async override Task OnInitializedAsync()
+    {
+        var _uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        if(QueryHelpers.ParseQuery(_uri.Query).TryGetValue("returnUrl",out var returnUrl))
+        {
+            ReturnUrl = returnUrl;
+        }
+    }
+
+    #endregion \Initialized
 
     #region Events
 
@@ -88,10 +106,12 @@
             if (ReturnUrl is null)
             {
                 NavigationManager.NavigateTo(uri: "/");
+                this.StateHasChanged();
             }
             else
             {
                 NavigationManager.NavigateTo(uri: ReturnUrl);
+                this.StateHasChanged();
             }
         }
         catch (Exception ex)
@@ -103,4 +123,5 @@
     #endregion \HandelSubmit
 
     #endregion \Events
+
 }

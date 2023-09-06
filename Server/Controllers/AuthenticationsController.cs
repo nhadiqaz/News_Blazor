@@ -28,9 +28,9 @@ namespace Server.Controllers
         #region EndPoints
 
         [HttpPost]
-        public async Task<IActionResult> Autentication(UserViewModel userViewModel)
+        public async Task<IActionResult> Autentication(UserLogInViewModel userViewModel)
         {
-            var _user = await ValidationUser(userViewModel);
+            var _user = await ValidationUser(userViewModel);//temprory
 
             if (_user is null)
             {
@@ -39,6 +39,9 @@ namespace Server.Controllers
 
             var _claims = new List<Claim>
             {
+                //new Claim(ClaimTypes.NameIdentifier,_user.UserId.ToString()),
+                //new Claim(ClaimTypes.Name,_user.UserName.ToString()),
+
                 new Claim("UserId",_user.UserId.ToString()),
                 new Claim("UserName",_user.UserName.ToString()),
                 new Claim("Email",_user.Email.ToString()),
@@ -53,7 +56,7 @@ namespace Server.Controllers
                 audience: Configuration["Authentication:Audience"],
                 claims: _claims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddDays(3),
                 signingCredentials: _signingCredentials
                 );
 
@@ -66,12 +69,13 @@ namespace Server.Controllers
 
         #region Method
 
-        private async Task<User> ValidationUser(UserViewModel userViewModel)
+        private async Task<User> ValidationUser(UserLogInViewModel userViewModel)
         {
             var _user = new User
             {
                 UserId = 1,
                 UserName = "Nhadiqaz",
+                Password = "123",
                 FirstName = "Hadi",
                 LastName = "Najafapour",
                 Email = "hadinajafpourf5@gmail.com",

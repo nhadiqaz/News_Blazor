@@ -1,0 +1,53 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>شما اجازه دسترسی به این صفحه را ندارید</h3>
+            <br />
+            <button class="btn btn-primary" @onclick=btnLogin_Click>@(DataDictionary.LogIn)</button>
+            <button class="btn btn-success" @onclick=btnRegister_Click>@(DataDictionary.Register)</button>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
+@code{
+
+    #region Events
+
+    #region btnLogin_Click
+
+    public async Task btnLogin_Click()
+    {
+        var _returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+        if(_returnUrl is not null)
+        {
+            NavigationManager.NavigateTo(uri: $"/Login?returnUrl={_returnUrl}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo(uri: "/Login");
+        }
+
+        // NavigationManager.NavigateTo(uri: "/Login");
+    }
+
+    #endregion \btnLogin_Click
+
+
+    #region btnRegister_Click
+
+
+    public async Task btnRegister_Click()
+    {
+        
+    }
+
+    #endregion \btnRegister_Click
+
+    #endregion \Events
+
+}

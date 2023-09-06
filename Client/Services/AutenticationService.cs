@@ -23,17 +23,18 @@ namespace Services
 
         #region GetToken
 
-        public async Task<string> GetTokenAsync(UserViewModel userViewModel)
+        public async Task<string> GetTokenAsync(UserLogInViewModel userViewModel)
         {
             try
             {
-                var _result = await HttpClient.PostAsJsonAsync<UserViewModel>(requestUri: "api/Authentications/Autentication", userViewModel);
+                //var _result = await HttpClient.PostAsJsonAsync(requestUri: "api/Authentications/Autentication", userViewModel);
+                var _result = await HttpClient.PostAsJsonAsync<UserLogInViewModel>(requestUri: "api/Authentications/Autentication", userViewModel);
 
-                string _token;
+                //string _token;
 
                 if (_result.IsSuccessStatusCode)
                 {
-                    _token = await _result.Content.ReadAsStringAsync();
+                    var _token = await _result.Content.ReadAsStringAsync();
                     return _token;
                 }
                 else

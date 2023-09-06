@@ -31,7 +31,7 @@ builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 #endregion \Repositories
 
-#region JWt
+#region JWT
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
 {
@@ -46,7 +46,7 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
     };
 });
 
-#endregion \JWt
+#endregion \JWT
 
 #endregion \Services
 
@@ -71,7 +71,6 @@ app.UseCors(policy =>
 });
 
 app.UseHttpsRedirection();
-
 
 app.UseAuthentication();
 app.UseAuthorization();

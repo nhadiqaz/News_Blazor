@@ -1,6 +1,6 @@
-﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+﻿@inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorageService
-@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="top-bar">
     <div class="container-fluid">
@@ -18,15 +18,24 @@
                             <li><a href="#">درباره ما</a></li>
                             <li><a href="#">مقالات</a></li>
                             <AuthorizeView>
-                                <Authorized>
+                                <NotAuthorized>
+                                    @* <li><a href="/Login">ورود</a></li> *@
+                                    <li>
+                                        <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;" @onclick="btnLogIn_Click">
+                                            @(DataDictionary.LogIn)
+                                        </button>
+                                    </li>
+                                </NotAuthorized>
+                                <Authorized> 
+                                    @*<li><a>@(context.User.Identity.Name))</a></li> *@
+
                                     <li><a>@(context.User.FindFirst("UserName").Value)</a></li>
                                     <li>
-                                        <a href="#" @onclick="btnLogOut_Click">خروج</a>
+                                        <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;" @onclick="btnLogOut_Click">
+                                            @(DataDictionary.LogOut)
+                                        </button>
                                     </li>
                                 </Authorized>
-                                <NotAuthorized>
-                                    <li><a href="/Login">ورود</a></li>
-                                </NotAuthorized>
                             </AuthorizeView>
                         </ul>
                     </div>
@@ -73,31 +82,33 @@
 
 @code {
 
-
     #region Events
+
+    #region btnLogIn_Click
+
+    public async Task btnLogIn_Click()
+    {
+        var _returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+        NavigationManager.NavigateTo(uri: $"/Login?returnUrl={_returnUrl}");
+    }
+
+    #endregion \btnLogIn_Click
+
+    #region btnLogOut_Click
 
     public async Task btnLogOut_Click()
     {
-        string? _returnUrl = null ;
+        var _uri = NavigationManager.Uri;
 
-        await Task.Run(() =>
-        {
-            var _url = NavigationManager.Uri;
-
-            var _baseUrl = NavigationManager.BaseUri;
-
-            _returnUrl = _url.Replace(_baseUrl, "");
-        });
-
+        var _returnUrl = NavigationManager.ToBaseRelativePath(_uri);
 
         await LocalStorageService.RemoveItemAsync(key: "token");
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-        if (_returnUrl is not null)
-        {
-            NavigationManager.NavigateTo(uri: _returnUrl);
-        }
+        NavigationManager.NavigateTo(_returnUrl);
     }
+
+    #endregion \btnLogOut_Click
 
     #endregion \Events
 }

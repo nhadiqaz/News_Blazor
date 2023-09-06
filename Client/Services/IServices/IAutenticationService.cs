@@ -4,6 +4,6 @@ namespace Services
 {
     public interface IAutenticationService
     {
-        Task<string> GetTokenAsync(UserViewModel userViewModel);
+        Task<string> GetTokenAsync(UserLogInViewModel userViewModel);
     }
 }
