@@ -15,8 +15,8 @@ namespace Services
     public class PostService : IPostService
     {
         #region Dependency
-        public HttpClient HttpClient { get; }
-        public ILogService LogService { get; }
+        protected HttpClient HttpClient { get; }
+        protected ILogService LogService { get; }
 
         public PostService(HttpClient httpClient, ILogService logService)
         {
@@ -60,7 +60,7 @@ namespace Services
             {
                 var _response = await HttpClient.GetFromJsonAsync<Models.Post>(requestUri: $"api/Posts/GetPost/{postId}");
 
-                var _postViewModel = _response.Post_ConvertTo_EditPostViewModel();
+                var _postViewModel = _response.ConvertTo_EditPostViewModel();
 
                 _postViewModel.ImageUrl = await GetImageUrlAsync(_postViewModel.ImageName);
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Models;
+using Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,9 +17,12 @@ namespace Server.Controllers
     {
         #region Dependency
         private IConfiguration Configuration { get; }
-        public AuthenticationsController(IConfiguration configuration)
+        public IUserRepository UserRepository { get; }
+
+        public AuthenticationsController(IConfiguration configuration, IUserRepository userRepository)
         {
             Configuration = configuration;
+            UserRepository = userRepository;
         }
 
         #endregion \Dependency
@@ -28,13 +33,28 @@ namespace Server.Controllers
         #region EndPoints
 
         [HttpPost]
-        public async Task<IActionResult> Autentication(UserLogInViewModel userViewModel)
+        public async Task<IActionResult> Autentication(LogInUserViewModel logInUserViewModel)
         {
-            var _user = await ValidationUser(userViewModel);//temprory
-
-            if (_user is null)
+            if (await UserRepository.IsExistEmailAsync(logInUserViewModel.Email) == false)
             {
-                return Unauthorized();
+                var _error = new ErrorMessageViewModel
+                {
+                    Message = "کاربری با این پست الکتریکی در سیستم موجود نیست"
+                };
+
+                return NotFound(_error);
+            }
+
+            var _user = await UserRepository.GetUserAsync(logInUserViewModel.Email);
+
+            if (await UserRepository.IsCorrectPasswordAsync(logInUserViewModel.Password, _user.PasswordHash, _user.PasswordSalt) == false)
+            {
+                var _error = new ErrorMessageViewModel
+                {
+                    Message = "رمز عبور به درستی وارد نشده است"
+                };
+
+                return BadRequest(_error);
             }
 
             var _claims = new List<Claim>
@@ -43,7 +63,6 @@ namespace Server.Controllers
                 //new Claim(ClaimTypes.Name,_user.UserName.ToString()),
 
                 new Claim("UserId",_user.UserId.ToString()),
-                new Claim("UserName",_user.UserName.ToString()),
                 new Claim("Email",_user.Email.ToString()),
             };
 
@@ -66,26 +85,5 @@ namespace Server.Controllers
         }
 
         #endregion EndPoints
-
-        #region Method
-
-        private async Task<User> ValidationUser(UserLogInViewModel userViewModel)
-        {
-            var _user = new User
-            {
-                UserId = 1,
-                UserName = "Nhadiqaz",
-                Password = "123",
-                FirstName = "Hadi",
-                LastName = "Najafapour",
-                Email = "hadinajafpourf5@gmail.com",
-                CreateDate = DateTime.Now,
-            };
-
-            return _user;
-        }
-
-        #endregion \Method
-
     }
 }

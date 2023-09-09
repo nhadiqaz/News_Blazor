@@ -19,7 +19,11 @@
                             <li><a href="#">مقالات</a></li>
                             <AuthorizeView>
                                 <NotAuthorized>
-                                    @* <li><a href="/Login">ورود</a></li> *@
+                                    <li>
+                                        <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;width:100%" @onclick="btnRegister_Click">
+                                            @(DataDictionary.Register)
+                                        </button>
+                                    </li>
                                     <li>
                                         <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;" @onclick="btnLogIn_Click">
                                             @(DataDictionary.LogIn)
@@ -27,9 +31,8 @@
                                     </li>
                                 </NotAuthorized>
                                 <Authorized> 
-                                    @*<li><a>@(context.User.Identity.Name))</a></li> *@
 
-                                    <li><a>@(context.User.FindFirst("UserName").Value)</a></li>
+                                    <li><a>@(context.User.FindFirst("Email").Value)</a></li>
                                     <li>
                                         <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;" @onclick="btnLogOut_Click">
                                             @(DataDictionary.LogOut)
@@ -90,7 +93,7 @@
     {
         var _returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
 
-        NavigationManager.NavigateTo(uri: $"/Login?returnUrl={_returnUrl}");
+        NavigationManager.NavigateTo(uri: $"/User/Login?returnUrl={_returnUrl}");
     }
 
     #endregion \btnLogIn_Click
@@ -109,6 +112,17 @@
     }
 
     #endregion \btnLogOut_Click
+
+    #region btnRegister_Click
+
+    public async Task btnRegister_Click()
+    {
+        var _returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+        NavigationManager.NavigateTo($"/User/Register?returnUrl={_returnUrl}");
+    }
+
+    #endregion \btnRegister_Click
 
     #endregion \Events
 }

@@ -1,5 +1,3 @@
-#region Services
-
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,14 +5,16 @@ using Microsoft.Net.Http.Headers;
 using Repositories;
 using System.Text;
 
+#region Services
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Logging.AddConsole();
 
 #region Context
 
@@ -28,6 +28,7 @@ builder.Services.AddDbContext<MyApplicationDbContext>(option =>
 #region Repositories
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 #endregion \Repositories
 
@@ -50,9 +51,11 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
 
 #endregion \Services
 
+
 #region Ppipeline
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

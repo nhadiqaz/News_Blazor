@@ -120,6 +120,9 @@
   <data name="Add" xml:space="preserve">
     <value>افزودن</value>
   </data>
+  <data name="ConfirmPassworrd" xml:space="preserve">
+    <value>تکرار رمز عبور</value>
+  </data>
   <data name="Counter" xml:space="preserve">
     <value>شماره</value>
   </data>
@@ -144,8 +147,17 @@
   <data name="Edit" xml:space="preserve">
     <value>ویرایش</value>
   </data>
+  <data name="Email" xml:space="preserve">
+    <value>پست الکتریکی</value>
+  </data>
+  <data name="Firstname" xml:space="preserve">
+    <value>نام</value>
+  </data>
   <data name="Image" xml:space="preserve">
     <value>تصویر</value>
+  </data>
+  <data name="Lastname" xml:space="preserve">
+    <value>نام خانوادگی</value>
   </data>
   <data name="LogIn" xml:space="preserve">
     <value>ورود</value>

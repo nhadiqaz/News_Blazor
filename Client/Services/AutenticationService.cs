@@ -1,4 +1,5 @@
 ﻿using Models;
+using System.Net;
 using System.Net.Http.Json;
 using ViewModels;
 
@@ -23,19 +24,27 @@ namespace Services
 
         #region GetToken
 
-        public async Task<string> GetTokenAsync(UserLogInViewModel userViewModel)
+        public async Task<string> GetTokenAsync(LogInUserViewModel logInUserViewModel)
         {
             try
             {
-                //var _result = await HttpClient.PostAsJsonAsync(requestUri: "api/Authentications/Autentication", userViewModel);
-                var _result = await HttpClient.PostAsJsonAsync<UserLogInViewModel>(requestUri: "api/Authentications/Autentication", userViewModel);
+                //var response = await HttpClient.PostAsJsonAsync(requestUri: "api/Authentications/Autentication", userViewModel);
+                var _response = await HttpClient.PostAsJsonAsync<LogInUserViewModel>(requestUri: "api/Authentications/Autentication", logInUserViewModel);
 
-                //string _token;
-
-                if (_result.IsSuccessStatusCode)
+                if (_response.IsSuccessStatusCode)
                 {
-                    var _token = await _result.Content.ReadAsStringAsync();
+                    var _token = await _response.Content.ReadAsStringAsync();
                     return _token;
+                }
+                else if (_response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    var _message = await _response.Content.ReadAsStringAsync();
+                    throw new Exception(_message);
+                }
+                else if (_response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var _message = await _response.Content.ReadAsStringAsync();
+                    throw new Exception(_message);
                 }
                 else
                 {

@@ -10,12 +10,24 @@ namespace Data
 {
     public class MyApplicationDbContext:DbContext
     {
+        #region Dependency
+
         public MyApplicationDbContext(DbContextOptions<MyApplicationDbContext> options):base(options)
         {
             
         }
 
+        #endregion \Dependency
+
+        #region Properties
+
         public DbSet<Post> Posts { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
+        #endregion \Properties
+
+        #region Methodes
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,5 +42,7 @@ namespace Data
                 }
                 );
         }
+
+        #endregion \Methodes
     }
 }

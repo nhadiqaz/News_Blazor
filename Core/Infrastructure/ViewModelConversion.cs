@@ -1,4 +1,6 @@
-﻿using Models;
+﻿using Generator;
+using Generator;
+using Models;
 using System.Net.Http.Headers;
 using ViewModels;
 
@@ -9,7 +11,7 @@ namespace Infrastructure
         #region Post
 
         #region AddPostViewModel ConvertTo Post
-        public static Post AddPostViewModel_ConvertTo_Post(this AddPostViewModel addPostViewModel)
+        public static Post ConvertTo_Post(this AddPostViewModel addPostViewModel)
         {
             var _post = new Post(
                                 addPostViewModel.Title,
@@ -24,7 +26,7 @@ namespace Infrastructure
 
         #region Post Convert EditPostViewModel
 
-        public static EditPostViewModel Post_ConvertTo_EditPostViewModel(this Post post)
+        public static EditPostViewModel ConvertTo_EditPostViewModel(this Post post)
         {
             var _editPostViewModel = new EditPostViewModel
             {
@@ -42,5 +44,25 @@ namespace Infrastructure
         #endregion \Post ConvertTo EditPostViewModel
 
         #endregion \Post
+
+        #region User
+
+        #region RegisterUserViewModel ConvertTo User
+
+        public static User ConvertTo_User(this RegisterUserViewModel registerUserViewModel)
+        {
+            HashGenerator.CreatePasswordHash(registerUserViewModel.Password, out var passwordHash, out var passwordSalt);
+
+            var _user = new User(registerUserViewModel.Email, passwordHash, passwordSalt)
+            {
+                FirstName = registerUserViewModel.Firstname,
+                LastName = registerUserViewModel.Lastname
+            };
+
+            return _user;
+        }
+        #endregion \RegisterUserViewModel ConvertTo User
+
+        #endregion \User
     }
 }

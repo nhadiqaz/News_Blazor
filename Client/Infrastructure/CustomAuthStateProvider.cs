@@ -31,7 +31,7 @@ namespace Client.Infrastructure
 
             var _token = await LocalStorageService.GetItemAsStringAsync(key: "token");
 
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 var _identiry = new ClaimsIdentity();
 

@@ -1,6 +1,4 @@
-﻿@page "/Login"
-@page "/Login/{ReturnUrl}"
-
+﻿@page "/User/Login"
 
 @inject NavigationManager NavigationManager
 @inject IAutenticationService AutenticationService
@@ -27,18 +25,27 @@
             else
             {
                 <EditForm Model="Model" OnValidSubmit="HandelSubmit">
-                    @* <DataAnnotationsValidator></DataAnnotationsValidator> *@
-                    <div class="form-group" style="padding-right:250px">
-                        <div class="col-md-8">
-                            <div class="col-12">
-                                <label for="@(nameof(Model.UserName))">@(DataDictionary.Username)</label>
-                                <InputText id="@(nameof(Model.UserName))" class="form-control" @bind-Value="Model.UserName" placeholder="..."></InputText>
+
+                    <DataAnnotationsValidator></DataAnnotationsValidator> 
+
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <div class="col-12">
+                            <div class="form-group">
+
+                                @*Email *@
+                                <label for="@(nameof(Model.Email))">@(DataDictionary.Email)</label>
+                                <InputText id="@(nameof(Model.Email))" class="form-control" @bind-Value="Model.Email" placeholder="..."></InputText>
                                 <div class="form-control-validation">
-                                    <ValidationMessage For="()=>Model.UserName"></ValidationMessage>
+                                    <ValidationMessage For="()=>Model.Email"></ValidationMessage>
                                     <br />
                                 </div>
                             </div>
-                            <div class="col-12">
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+
+                                @* Password *@
                                 <label for="@(nameof(Model.Password))">@(DataDictionary.LogIn)</label>
                                 <InputText id="@(nameof(Model.Password))" class="form-control" @bind-Value="Model.Password" type="password" placeholder="..."></InputText>
                                 <div class="form-control-validation">
@@ -46,10 +53,10 @@
                                     <br />
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-block">@(DataDictionary.Password)</button>
-                                <br />
-                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block">@(DataDictionary.Password)</button>
+                            <br />
                         </div>
                     </div>
                 </EditForm>
@@ -60,17 +67,10 @@
 
 @code {
 
-    #region Parameter
-
-    [Parameter]
-    public string? ReturnUrl { get; set; }
-
-    #endregion \Parameter
-
-
     #region Properties
 
-    public UserLogInViewModel Model { get; set; } = new UserLogInViewModel();
+    public LogInUserViewModel Model { get; set; } = new LogInUserViewModel();
+    public string? ReturnUrl { get; set; }
 
     #endregion \Properties
 
@@ -79,12 +79,15 @@
 
     protected async override Task OnInitializedAsync()
     {
-        var _uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-
-        if(QueryHelpers.ParseQuery(_uri.Query).TryGetValue("returnUrl",out var returnUrl))
+        await Task.Run(() =>
         {
-            ReturnUrl = returnUrl;
-        }
+            var _uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+            if (QueryHelpers.ParseQuery(_uri.Query).TryGetValue("returnUrl", out var returnUrl))
+            {
+                ReturnUrl = returnUrl;
+            }
+        });
     }
 
     #endregion \Initialized
@@ -97,7 +100,7 @@
     {
         try
         {
-            var _token = await AutenticationService.GetTokenAsync(userViewModel: Model);
+            var _token = await AutenticationService.GetTokenAsync(Model);
 
             await LocalStorageService.SetItemAsync(key: "token", _token);
 

@@ -18,20 +18,22 @@ namespace Server.Controllers
 
         public IPostRepository PostRepository { get; }
         public IWebHostEnvironment WebHostEnvironment { get; }
+        public ILogger<PostsController> Logger { get; }
 
-        public PostsController(IPostRepository postRepository, IWebHostEnvironment webHostEnvironment)
+        public PostsController(IPostRepository postRepository, IWebHostEnvironment webHostEnvironment,ILogger<PostsController> logger)
         {
             PostRepository = postRepository;
             WebHostEnvironment = webHostEnvironment;
+            Logger = logger;
         }
 
 
         #endregion \Dependency
 
-        #region Actions
+        #region EndPoints
 
         #region GetAllPosts
-        //[Authorize]
+
         [HttpGet]
         public async Task<ActionResult<List<Post>>> GetAllPosts()
         {
@@ -47,14 +49,22 @@ namespace Server.Controllers
         [HttpGet("{postId}")]
         public async Task<ActionResult<Post>> GetPost(int postId)
         {
-            var _post = await PostRepository.GetPostAsync(postId);
-
-            if (_post == null)
+            try
             {
-                return BadRequest();
-            }
+                var _post = await PostRepository.GetPostAsync(postId);
 
-            return Ok(_post);
+                if (_post == null)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(_post);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw;
+            }
         }
 
         #endregion \GetPost
@@ -79,7 +89,7 @@ namespace Server.Controllers
                 return BadRequest(_errorMessage);
             }
 
-            var _post = addPostViewModel.AddPostViewModel_ConvertTo_Post();
+            var _post = addPostViewModel.ConvertTo_Post();
 
             _post = await PostRepository.AddPostAsync(_post);
 
@@ -187,6 +197,6 @@ namespace Server.Controllers
         }
         #endregion \GetImageName
 
-        #endregion \Actions
+        #endregion \EndPoints
     }
 }

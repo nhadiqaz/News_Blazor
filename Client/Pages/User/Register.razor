@@ -1,0 +1,191 @@
+﻿@page "/User/Register"
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime Js
+@inject IUserService UserService
+@inject IAutenticationService AutenticationService
+@inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3 style="text-align:center">
+                ثبت نام کاربر
+            </h3>
+            <hr style="border-top-color:black" />
+            <EditForm Model="Model" OnValidSubmit="HandelSubmit">
+
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+
+                    @* FirstName *@
+                    <div class="form-group">
+                        <label id="@(nameof(Model.Firstname))">@(DataDictionary.Firstname)</label>
+                        <InputText id="@(nameof(Model.Firstname))" class="form-control" @bind-Value="Model.Firstname" placeholder="..." />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="()=>Model.Firstname" />
+                            <br />
+                        </div>
+                    </div>
+
+                    @* Lastname *@
+                    <div class="form-group">
+                        <label id="@(nameof(Model.Lastname))">@(DataDictionary.Lastname)</label>
+                        <InputText id="@(nameof(Model.Lastname))" class="form-control" @bind-Value="Model.Lastname" placeholder="..." />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="()=>Model.Lastname" />
+                            <br />
+                        </div>
+                    </div>
+
+                    @* Email *@
+                    <div class="form-group">
+                        <label for="@(nameof(Model.Email))">@(DataDictionary.Email)</label><span class="RequiredField">*</span>
+                        <InputText id="@(nameof(Model.Email))" class="form-control" @bind-Value="@Model.Email" @oninput="txtEmail_Leave" placeholder="..." />
+                        <div class="form-control-validation" style="display:@(DisplayErrorMessage_Email)">
+                            <p class="validation-message">
+                                ایمیل وارد شده در سیستم موجود است
+                            </p>
+                            @* <ValidationMessage For="()=>Model.Email" />
+                            <br /> *@
+                        </div>
+                        <div class="form-control-validation">
+                            <ValidationMessage For="()=>Model.Email" />
+                            <br />
+                        </div>
+                    </div>
+
+                    @* Password *@
+                    <div class="form-group">
+                        <label id="@(nameof(Model.Password))">@(DataDictionary.Password)</label><span class="RequiredField">*</span>
+                        <InputText id="@(nameof(Model.Password))" class="form-control" @bind-Value="Model.Password" type="Password" placeholder="..." />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="()=>Model.Password" />
+                            <br />
+                        </div>
+                    </div>
+
+                    @* ConfirmPassword *@
+                    <div class="form-group">
+                        <label id="@(nameof(Model.ConfirmPassworrd))">@(DataDictionary.ConfirmPassworrd)</label><span class="RequiredField">*</span>
+                        <InputText id="@(nameof(Model.ConfirmPassworrd))" class="form-control" @bind-Value="Model.ConfirmPassworrd" type="Password" placeholder="..." />
+                        <div class="form-control-validation">
+                            <ValidationMessage For="()=>Model.ConfirmPassworrd" />
+                            <br />
+                        </div>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Create)</button>
+                    <br />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    #region Properties
+
+    public string ReturnUrl { get; set; }
+
+    public RegisterUserViewModel Model { get; set; } = new();
+
+    public string? DisplayErrorMessage_Email { get; set; } = "none";
+
+    public string? DisplayErrorMessage_Username { get; set; } = "none";
+
+    #endregion \Properties
+
+    #region Initialized
+
+    protected async override Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            var _url = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+            if (QueryHelpers.ParseQuery(_url.Query).TryGetValue("ReturnUrl", out var returnUrl))
+            {
+                ReturnUrl = returnUrl;
+            }
+            else
+            {
+                ReturnUrl = "";
+            }
+        });
+    }
+
+    #endregion \Initialized
+
+    #region Events
+
+    #region HandelSubmit
+
+    public async Task HandelSubmit()
+    {
+        try
+        {
+            await UserService.AddUserAsync(Model);
+
+            var _logInUserViewModel = new LogInUserViewModel
+                {
+                    Email = Model.Email,
+                    Password = Model.Password,
+                };
+
+            var _token = await AutenticationService.GetTokenAsync(_logInUserViewModel);
+
+            await LocalStorageService.SetItemAsync(key: "token", _token);
+
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            await Js.InvokeVoidAsync(JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "ثبت نام به موفقیت انجام شد");
+
+            NavigationManager.NavigateTo(ReturnUrl);
+            this.StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+
+    #endregion \HandelSubmit
+
+    #region txtEmail_Leave
+
+    public async Task txtEmail_Leave(ChangeEventArgs e)
+    {
+        try
+        {
+            var _email = e.Value.ToString();
+
+            if (string.IsNullOrEmpty(_email) == false)
+            {
+                var _isExistEmail = await UserService.IsExistEmailAsync(_email);
+
+                if (_isExistEmail)
+                {
+                    DisplayErrorMessage_Email = "";
+                }
+                else
+                {
+                    DisplayErrorMessage_Email = "none";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync(JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+    #endregion \txtEmail_Leave
+
+    #endregion Events
+
+}

@@ -1,5 +1,11 @@
 ﻿@inject NavigationManager NavigationManager
 
+<style>
+    .RequiredField {
+        color: red;
+    }
+</style>
+
 <div class="container">
     <div class="row">
         <div class="col">
@@ -25,14 +31,12 @@
 
         if(_returnUrl is not null)
         {
-            NavigationManager.NavigateTo(uri: $"/Login?returnUrl={_returnUrl}");
+            NavigationManager.NavigateTo(uri: $"/User/Login?returnUrl={_returnUrl}");
         }
         else
         {
-            NavigationManager.NavigateTo(uri: "/Login");
+            NavigationManager.NavigateTo(uri: "/User/Login");
         }
-
-        // NavigationManager.NavigateTo(uri: "/Login");
     }
 
     #endregion \btnLogin_Click
@@ -43,7 +47,16 @@
 
     public async Task btnRegister_Click()
     {
-        
+        var _returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+        if(_returnUrl is not null)
+        {
+            NavigationManager.NavigateTo($"/User/Register?returnUrl={_returnUrl}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/User/Register");
+        }
     }
 
     #endregion \btnRegister_Click

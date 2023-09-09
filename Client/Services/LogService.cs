@@ -48,7 +48,7 @@ namespace Services
         #endregion \GetLogAsync
 
         #region LogCountAsync
-        
+
         public async Task<int> LogCountAsync()
         {
             return Logs.Count;

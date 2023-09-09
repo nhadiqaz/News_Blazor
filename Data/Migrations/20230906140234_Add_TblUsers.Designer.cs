@@ -4,6 +4,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(MyApplicationDbContext))]
-    partial class MyApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230906140234_Add_TblUsers")]
+    partial class Add_TblUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +64,7 @@ namespace Data.Migrations
                         new
                         {
                             PostId = 1,
-                            CreateDate = new DateTime(2023, 9, 9, 21, 33, 54, 893, DateTimeKind.Local).AddTicks(1536),
+                            CreateDate = new DateTime(2023, 9, 6, 17, 32, 34, 697, DateTimeKind.Local).AddTicks(1795),
                             Description = "متن ساختگی با تولید سادگی نامفهوم تولید سادگی از صنعت متن ساختگی با تولید سادگمتن ساختگی با تولید سادگی نامفهوم تولید سادگی از صنعت متن ساختگی با تولید سادگ",
                             ImageName = "1",
                             ShortDescription = "متن ساختگی با تولید سادگی نامفهوم تولید سادگی از صنعت متن ساختگی با تولید سادگی",
@@ -98,6 +101,9 @@ namespace Data.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 

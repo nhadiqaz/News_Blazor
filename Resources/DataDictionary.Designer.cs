@@ -70,6 +70,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to تکرار رمز عبور.
+        /// </summary>
+        public static string ConfirmPassworrd {
+            get {
+                return ResourceManager.GetString("ConfirmPassworrd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to شماره.
         /// </summary>
         public static string Counter {
@@ -142,11 +151,38 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to پست الکتریکی.
+        /// </summary>
+        public static string Email {
+            get {
+                return ResourceManager.GetString("Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to نام.
+        /// </summary>
+        public static string Firstname {
+            get {
+                return ResourceManager.GetString("Firstname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to تصویر.
         /// </summary>
         public static string Image {
             get {
                 return ResourceManager.GetString("Image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to نام خانوادگی.
+        /// </summary>
+        public static string Lastname {
+            get {
+                return ResourceManager.GetString("Lastname", resourceCulture);
             }
         }
         
