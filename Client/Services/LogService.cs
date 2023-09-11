@@ -25,15 +25,22 @@ namespace Services
 
         public async Task AddLogAsync(Log log)
         {
-            await Task.Run(() =>
+            try
             {
-                if (string.IsNullOrEmpty(log.Message))
+                await Task.Run(() =>
                 {
-                    return;
-                }
+                    if (string.IsNullOrEmpty(log.Message))
+                    {
+                        return;
+                    }
 
-                Logs.Insert(index: 0, log);
-            });
+                    Logs.Insert(index: 0, log);
+                });
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+            }
         }
 
         #endregion \AddLogAsync
@@ -42,7 +49,15 @@ namespace Services
 
         public async Task<List<Log>> GetLogsAsync()
         {
-            return Logs;
+            try
+            {
+                return Logs;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
         #endregion \GetLogAsync
@@ -51,7 +66,15 @@ namespace Services
 
         public async Task<int> LogCountAsync()
         {
-            return Logs.Count;
+            try
+            {
+                return Logs.Count;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
         #endregion \LogCountAsync

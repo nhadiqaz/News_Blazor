@@ -1,4 +1,5 @@
 ﻿@inject IPostService PostService
+@inject IJSRuntime Js
 
 <div class="latest-posts">
     <div class="container-fluid">
@@ -27,7 +28,6 @@
     #region Variables
 
     public List<Models.Post> Posts { get; set; }
-    private int _index = 1;
 
     #endregion \Variables
 
@@ -41,7 +41,7 @@
         }
         catch (Exception ex)
         {
-            throw ex;
+            await Js.InvokeVoidAsync(JavaScriptMethods.ShowErrorMessage, ex.Message);
         }
     }
 

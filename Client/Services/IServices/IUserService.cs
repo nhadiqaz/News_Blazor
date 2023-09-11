@@ -1,4 +1,5 @@
-﻿using ViewModels;
+﻿using Models;
+using ViewModels;
 
 namespace Services
 {
@@ -6,5 +7,7 @@ namespace Services
     {
         Task<bool> IsExistEmailAsync(string email);
         Task AddUserAsync(RegisterUserViewModel registerUserViewModel);
+        Task<UpdateUserViewModel> GetUserAsync(int userId);
+        Task UpdateUserAsync(int userId, UpdateUserViewModel updateUserViewModel);
     }
 }

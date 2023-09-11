@@ -63,6 +63,22 @@ namespace Infrastructure
         }
         #endregion \RegisterUserViewModel ConvertTo User
 
+        #region User ConvertTo UpdateUserViewModel
+
+        public static UpdateUserViewModel ConvertTo_UpdateUserViewModel(this User user)
+        {
+            var _updateUserViewModel = new UpdateUserViewModel
+            {
+                Email = user.Email,
+                Firstname = user.FirstName,
+                Lastname = user.LastName,
+            };
+
+            return _updateUserViewModel;
+        }
+
+        #endregion \User ConvertTo UpdateUserViewModel
+
         #endregion \User
     }
 }

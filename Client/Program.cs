@@ -23,7 +23,7 @@ builder.Services.AddScoped(sp => new HttpClient {
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ILogService, LogService>();
-builder.Services.AddScoped<IAutenticationService, AutenticationService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 #endregion \CustomServices

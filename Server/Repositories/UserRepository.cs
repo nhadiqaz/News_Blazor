@@ -87,12 +87,12 @@ namespace Repositories
 
         #region GetUser
 
-        public async Task<User> GetUserAsync(string phonenumberOremail)
+        public async Task<User> GetUserAsync(string email)
         {
             try
             {
                 var _user = await Context.Users
-                                    .Where(u => u.Email == phonenumberOremail)
+                                    .Where(u => u.Email == email)
                                     .FirstOrDefaultAsync();
 
                 return _user;
@@ -106,7 +106,54 @@ namespace Repositories
             }
         }
 
+        public async Task<User> GetUserAsync(int userId)
+        {
+            try
+            {
+                var _user = await Context.Users
+                                        .FindAsync(userId);
+
+                return _user;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
         #endregion \GetUser
+
+        #region UpdateUser
+
+        public async Task UpdateUserAsync(int userId, UpdateUserViewModel updateUserViewModel)
+        {
+            try
+            {
+                var _user = await Context.Users
+                                       .FindAsync(userId);
+
+                _user.Email = updateUserViewModel.Email;
+                _user.FirstName = updateUserViewModel.Firstname;
+                _user.LastName = updateUserViewModel.Lastname;
+
+                await Task.Run(() =>
+                {
+                    Context.Users.Update(_user);
+                });
+
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+        #endregion \UpdateUser
 
         #endregion \Methods
     }

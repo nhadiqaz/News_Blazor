@@ -2,8 +2,9 @@
 
 namespace Services
 {
-    public interface IAutenticationService
+    public interface IAuthenticationService
     {
         Task<string> GetTokenAsync(LogInUserViewModel logInUserViewModel);
+        Task<string> GetTokenUpdateEmailAsync(string email);
     }
 }

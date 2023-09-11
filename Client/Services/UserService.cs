@@ -1,4 +1,5 @@
 ﻿using Client.Pages.User;
+using Infrastructure;
 using Models;
 using System.Net;
 using System.Net.Http.Json;
@@ -12,7 +13,7 @@ namespace Services
         public HttpClient HttpClient { get; }
         public ILogService LogService { get; }
 
-        public UserService(HttpClient httpClient,ILogService logService)
+        public UserService(HttpClient httpClient, ILogService logService)
         {
             HttpClient = httpClient;
             LogService = logService;
@@ -20,10 +21,9 @@ namespace Services
 
         #endregion \Dependency
 
-
         #region Methods
 
-        #region IsExistEmailAsync
+        #region IsExistEmail
         public async Task<bool> IsExistEmailAsync(string email)
         {
             try
@@ -49,13 +49,14 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
 
-        #endregion \IsExistEmailAsync
+        #endregion \IsExistEmail
 
-        #region AddUserAsync
+        #region AddUser
 
         public async Task AddUserAsync(RegisterUserViewModel registerUserViewModel)
         {
@@ -63,7 +64,7 @@ namespace Services
             {
                 var _response = await HttpClient.PostAsJsonAsync<RegisterUserViewModel>(requestUri: "api/Users/RegisterUser", registerUserViewModel);
 
-                if (_response.StatusCode==HttpStatusCode.BadRequest)
+                if (_response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     var _message = await _response.Content.ReadAsStringAsync();
 
@@ -74,11 +75,60 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
 
-        #endregion \AddUserAsync
+        #endregion \AddUser
+
+        #region GetUser
+
+        public async Task<UpdateUserViewModel> GetUserAsync(int userId)
+        {
+            try
+            {
+                var _response = await HttpClient.GetFromJsonAsync<User>(requestUri: $"api/Users/GetUser/{userId}");
+
+                var _updateUserViewModel = _response.ConvertTo_UpdateUserViewModel();
+
+                return _updateUserViewModel;
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \GetUser
+
+        #region UpdateUser
+
+        public async Task UpdateUserAsync(int userId,UpdateUserViewModel updateUserViewModel)
+        {
+            try
+            {
+                var _response= await HttpClient.PatchAsJsonAsync<UpdateUserViewModel>($"api/Users/UpdateUser/{userId}", updateUserViewModel);
+
+                if (_response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var _message = await _response.Content.ReadAsStringAsync();
+                    throw new Exception(_message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \UpdateUser
 
         #endregion \Methods
     }

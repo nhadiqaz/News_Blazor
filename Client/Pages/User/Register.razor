@@ -3,7 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime Js
 @inject IUserService UserService
-@inject IAutenticationService AutenticationService
+@inject IAuthenticationService AuthenticationService
 @inject ILocalStorageService LocalStorageService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -138,7 +138,7 @@
                     Password = Model.Password,
                 };
 
-            var _token = await AutenticationService.GetTokenAsync(_logInUserViewModel);
+            var _token = await AuthenticationService.GetTokenAsync(_logInUserViewModel);
 
             await LocalStorageService.SetItemAsync(key: "token", _token);
 
@@ -147,6 +147,7 @@
             await Js.InvokeVoidAsync(JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "ثبت نام به موفقیت انجام شد");
 
             NavigationManager.NavigateTo(ReturnUrl);
+
             this.StateHasChanged();
         }
         catch (Exception ex)

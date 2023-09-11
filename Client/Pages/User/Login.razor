@@ -1,11 +1,16 @@
 ﻿@page "/User/Login"
 
 @inject NavigationManager NavigationManager
-@inject IAutenticationService AutenticationService
+@inject IAuthenticationService AuthenticationService
 @inject ILocalStorageService LocalStorageService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IJSRuntime JS
 
+<style>
+    .form-control-validation{
+        color:red;
+    }
+</style>
 
 <div style="text-align:center">
     <h3>ورود</h3>
@@ -37,7 +42,7 @@
                                 <label for="@(nameof(Model.Email))">@(DataDictionary.Email)</label>
                                 <InputText id="@(nameof(Model.Email))" class="form-control" @bind-Value="Model.Email" placeholder="..."></InputText>
                                 <div class="form-control-validation">
-                                    <ValidationMessage For="()=>Model.Email"></ValidationMessage>
+                                    <ValidationMessage For="()=>Model.Email" />
                                     <br />
                                 </div>
                             </div>
@@ -49,7 +54,7 @@
                                 <label for="@(nameof(Model.Password))">@(DataDictionary.LogIn)</label>
                                 <InputText id="@(nameof(Model.Password))" class="form-control" @bind-Value="Model.Password" type="password" placeholder="..."></InputText>
                                 <div class="form-control-validation">
-                                    <ValidationMessage For="()=>Model.Password"></ValidationMessage>
+                                    <ValidationMessage For="()=>Model.Password" />
                                     <br />
                                 </div>
                             </div>
@@ -100,7 +105,7 @@
     {
         try
         {
-            var _token = await AutenticationService.GetTokenAsync(Model);
+            var _token = await AuthenticationService.GetTokenAsync(Model);
 
             await LocalStorageService.SetItemAsync(key: "token", _token);
 

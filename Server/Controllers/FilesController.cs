@@ -10,11 +10,22 @@ namespace Server.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
+        #region Dependency
+
         public IWebHostEnvironment WebHostEnvironment { get; }
-        public FilesController(IWebHostEnvironment webHostEnvironment)
+        public ILogger<FilesController> Logger { get; }
+
+        public FilesController(IWebHostEnvironment webHostEnvironment,ILogger<FilesController> logger)
         {
             WebHostEnvironment = webHostEnvironment;
+            Logger = logger;
         }
+
+        #endregion \Dependency
+
+        #region Endpoints
+
+        #region UploadImage
 
         [HttpPost]
         public async Task<string> UploadImage(List<IFormFile> files)
@@ -36,22 +47,39 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync(ex.Message);
-                throw ex;
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
+
+        #endregion \UploadImage
+
+        #region DeleteImage
 
         [HttpDelete("{imageName}")]
         public async Task<ActionResult> DeleteImage(string imageName)
         {
-            var _path = Path.Combine(WebHostEnvironment.WebRootPath, $"Images/Post/{imageName}.jpg");
-
-            if (System.IO.File.Exists(_path))
+            try
             {
-                System.IO.File.Delete(_path);
-            }
+                var _path = Path.Combine(WebHostEnvironment.WebRootPath, $"Images/Post/{imageName}.jpg");
 
-            return Ok("Delete image is successfully");
+                if (System.IO.File.Exists(_path))
+                {
+                    System.IO.File.Delete(_path);
+                }
+
+                return Ok("Delete image is successfully");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
+            
         }
+
+        #endregion \DeleteImage
+
+        #endregion \Endpoints
     }
 }

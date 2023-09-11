@@ -20,7 +20,7 @@ namespace Server.Controllers
         public IWebHostEnvironment WebHostEnvironment { get; }
         public ILogger<PostsController> Logger { get; }
 
-        public PostsController(IPostRepository postRepository, IWebHostEnvironment webHostEnvironment,ILogger<PostsController> logger)
+        public PostsController(IPostRepository postRepository, IWebHostEnvironment webHostEnvironment, ILogger<PostsController> logger)
         {
             PostRepository = postRepository;
             WebHostEnvironment = webHostEnvironment;
@@ -37,9 +37,17 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Post>>> GetAllPosts()
         {
-            var _posts = await PostRepository.GetAllPostsAsync();
+            try
+            {
+                var _posts = await PostRepository.GetAllPostsAsync();
 
-            return Ok(_posts);
+                return Ok(_posts);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
         #endregion \GetAllPosts
@@ -63,7 +71,7 @@ namespace Server.Controllers
             catch (Exception ex)
             {
                 Logger.LogCritical(ex.Message);
-                throw;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -74,26 +82,31 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Post>> AddPost(AddPostViewModel addPostViewModel)
         {
-            if (TryValidateModel(addPostViewModel) == false)
+            try
             {
-                return BadRequest();
-            }
-
-            if (await PostRepository.IsExistPostAsync(addPostViewModel.Title) == true)
-            {
-                var _errorMessage = new ErrorMessageViewModel
+                if (TryValidateModel(addPostViewModel) == false)
                 {
-                    Message = "This Post is exist"
-                };
+                    return BadRequest();
+                }
 
-                return BadRequest(_errorMessage);
+                if (await PostRepository.IsExistPostAsync(addPostViewModel.Title) == true)
+                {
+                    var _message = "خبری با این عنوان در سیستم ثبت شده است";
+
+                    return BadRequest(_message);
+                }
+
+                var _post = addPostViewModel.ConvertTo_Post();
+
+                _post = await PostRepository.AddPostAsync(_post);
+
+                return CreatedAtAction("GetPost", new { postId = _post.PostId }, _post);
             }
-
-            var _post = addPostViewModel.ConvertTo_Post();
-
-            _post = await PostRepository.AddPostAsync(_post);
-
-            return CreatedAtAction("GetPost", new { postId = _post.PostId }, _post);
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
         #endregion \AddPost
@@ -103,18 +116,26 @@ namespace Server.Controllers
         [HttpPatch("{postId}")]
         public async Task<ActionResult<Post>> UpdatePost(int postId, EditPostViewModel editPostViewModel)
         {
-            if (await PostRepository.IsExistPostAsync(postId) == false)
+            try
             {
-                return NotFound();
+                if (await PostRepository.IsExistPostAsync(postId) == false)
+                {
+                    return NotFound();
+                }
+                if (TryValidateModel(editPostViewModel) == false)
+                {
+                    BadRequest();
+                }
+
+                var _post = await PostRepository.UpdatePostAsync(postId, editPostViewModel);
+
+                return CreatedAtAction("GetPost", new { postId = _post.PostId }, _post);
             }
-            if (TryValidateModel(editPostViewModel) == false)
+            catch (Exception ex)
             {
-                BadRequest();
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
             }
-
-            var _post = await PostRepository.UpdatePostAsync(postId, editPostViewModel);
-
-            return CreatedAtAction("GetPost", new { postId = _post.PostId }, _post);
         }
 
         #endregion \UpdatePost
@@ -124,15 +145,24 @@ namespace Server.Controllers
         [HttpDelete("{postId}")]
         public async Task<ActionResult> DeletePost(int postId)
         {
-            if (await PostRepository.IsExistPostAsync(postId) is false)
+            try
             {
-                return NotFound();
+                if (await PostRepository.IsExistPostAsync(postId) is false)
+                {
+                    return NotFound();
+                }
+
+                await PostRepository.DeletePostAsync(postId);
+
+                return Ok("Delete is Successfully");
             }
-
-            await PostRepository.DeletePostAsync(postId);
-
-            return Ok("Delete is Successfully");
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
+
         #endregion \DeletePost
 
         #region GetImage
@@ -140,18 +170,26 @@ namespace Server.Controllers
         [HttpGet("{imagename}")]
         public async Task<IActionResult> GetImage(string imageName)
         {
-            var _filePath = Path.Combine(WebHostEnvironment.WebRootPath, "Images/Post", $"{imageName}.jpg");
-
-            byte[] _imageBytes = System.IO.File.ReadAllBytes(_filePath);
-
-            if (_imageBytes is null || _imageBytes.Length == 0)
+            try
             {
-                return NotFound();
+                var _filePath = Path.Combine(WebHostEnvironment.WebRootPath, "Images/Post", $"{imageName}.jpg");
+
+                byte[] _imageBytes = System.IO.File.ReadAllBytes(_filePath);
+
+                if (_imageBytes is null || _imageBytes.Length == 0)
+                {
+                    return NotFound();
+                }
+
+                var _mimeType = "image/jpg";
+
+                return File(_imageBytes, _mimeType);
             }
-
-            var _mimeType = "image/jpg";
-
-            return File(_imageBytes, _mimeType);
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
         #endregion \GetImage
@@ -161,17 +199,25 @@ namespace Server.Controllers
         [HttpGet("{title}")]
         public async Task<ActionResult<bool>> IsExistPost(string title)
         {
-            if (await PostRepository.IsExistPostAsync(title))
+            try
             {
-                return Ok(true);
+                if (await PostRepository.IsExistPostAsync(title))
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return Ok(false);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Ok(false);
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
-        #endregion
+        #endregion \IsExistPost
 
         #region GetImageName
 
@@ -191,7 +237,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync(ex.Message);
+                Logger.LogCritical(ex.Message);
                 throw new Exception(ex.Message);
             }
         }

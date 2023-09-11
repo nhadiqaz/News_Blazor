@@ -20,7 +20,7 @@
                             <AuthorizeView>
                                 <NotAuthorized>
                                     <li>
-                                        <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;width:100%" @onclick="btnRegister_Click">
+                                        <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;" @onclick="btnRegister_Click">
                                             @(DataDictionary.Register)
                                         </button>
                                     </li>
@@ -30,9 +30,13 @@
                                         </button>
                                     </li>
                                 </NotAuthorized>
-                                <Authorized> 
-
-                                    <li><a>@(context.User.FindFirst("Email").Value)</a></li>
+                                <Authorized>
+                                    <li>
+                                        <a href="/Post/Update?userId=@context.User.FindFirst("UserId").Value">@(DataDictionary.EditProfile)</a>
+                                    </li>
+                                    <li>
+                                        <a>@(context.User.FindFirst("Email").Value)</a>
+                                    </li>
                                     <li>
                                         <button type="button" class="btn btn-link btn-sm" style="color:#7b7272;" @onclick="btnLogOut_Click">
                                             @(DataDictionary.LogOut)
@@ -43,14 +47,14 @@
                         </ul>
                     </div>
                 </div>
-                <!-- <div class="col-md-3">
-                   <div class="show-cat">
-                       <span>
-                           دسته ها
-                           <i class="fa fa-bars"></i>
-                       </span>
-                   </div>
-                   </div> -->
+                @* <div class="col-md-3">
+                    <div class="show-cat">
+                        <span>
+                            دسته ها
+                            <i class="fa fa-bars"></i>
+                        </span>
+                    </div>
+                </div> *@
             </div>
         </div>
     </div>
@@ -84,6 +88,8 @@
 <div class="clear-fix"></div>
 
 @code {
+
+    public int UserId { get; set; }
 
     #region Events
 

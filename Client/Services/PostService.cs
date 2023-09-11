@@ -7,6 +7,7 @@ using Models;
 using Resources;
 using System.Data;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using ViewModels;
 
@@ -45,8 +46,10 @@ namespace Services
             }
             catch (Exception ex)
             {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
                 await Console.Out.WriteLineAsync(ex.Message);
-                throw ex;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -70,7 +73,7 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -95,6 +98,8 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -116,7 +121,7 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -158,7 +163,7 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -192,7 +197,7 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -211,8 +216,8 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
-                throw new Exception(ex.Message); 
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -236,7 +241,7 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -255,6 +260,8 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -274,13 +281,12 @@ namespace Services
             {
                 var _log = new Log(ex.Message);
                 await LogService.AddLogAsync(_log);
-
+                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
 
         #endregion \GetImageNameAsync
-
 
         #endregion \Methods
     }

@@ -1,9 +1,11 @@
 ﻿using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Identity.Client;
 using Models;
 using Repositories;
+using Resources;
 using ViewModels;
 
 namespace Server.Controllers
@@ -41,13 +43,10 @@ namespace Server.Controllers
 
                 if (await UserRepository.IsExistEmailAsync(registerUserViewModel.Email) == true)
                 {
-                    var _message = "Entered Email is exist";
-                    var _error = new ErrorMessageViewModel
-                    {
-                        Message = _message,
-                    };
+                    //var _message = "پست الکتریکی وارد شده در سیستم موجود است";
+                    var _message = ErrorMessage.IsExistEmail;
 
-                    return BadRequest(_error);
+                    return BadRequest(_message);
                 }
 
                 var _user = registerUserViewModel.ConvertTo_User();
@@ -59,7 +58,6 @@ namespace Server.Controllers
             catch (Exception ex)
             {
                 Logger.LogCritical(ex.Message);
-                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
@@ -80,13 +78,66 @@ namespace Server.Controllers
             catch (Exception ex)
             {
                 Logger.LogCritical(ex.Message);
-                await Console.Out.WriteLineAsync(ex.Message);
                 throw new Exception(ex.Message);
             }
         }
 
         #endregion \IsExistEmail
 
+        #region GetUser
+
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<User>> GetUser(int userId)
+        {
+            try
+            {
+                var _user = await UserRepository.GetUserAsync(userId);
+
+                if (_user is null)
+                {
+                    var _message = "کاربر مورد نظر یافت نشد";
+
+                    return NotFound(_message);
+                }
+
+                return Ok(_user);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \GetUser
+
+        #region UpdateUser
+
+        [HttpPatch("{userId}")]
+
+        public async Task<ActionResult<User>> UpdateUser(int userId, UpdateUserViewModel updateUserViewModel)
+        {
+            try
+            {
+                if (TryValidateModel(updateUserViewModel) == false)
+                {
+                    return BadRequest();
+                }
+
+                await UserRepository.UpdateUserAsync(userId, updateUserViewModel);
+
+                var _updateUser = await UserRepository.GetUserAsync(userId);
+
+                return Ok(_updateUser);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \UpdateUser
 
         #endregion \EndPoints
     }

@@ -4,6 +4,8 @@
 @inject IJSRuntime Js
 @inject NavigationManager NavigationManager
 
+@attribute [Authorize]
+
 <style>
     .validation-message {
         color: red;
@@ -19,7 +21,7 @@
             @if (Model == null)
             {
                 <div>
-                    Loading..
+                    Loading...
                 </div>
             }
             else

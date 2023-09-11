@@ -79,6 +79,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to پست الکتریکی وارد شده در سیستم موجود است.
+        /// </summary>
+        public static string IsExistEmail {
+            get {
+                return ResourceManager.GetString("IsExistEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to کارکتر های این فیلد بیشتر از حد مجاز است.
         /// </summary>
         public static string MaxLength {
