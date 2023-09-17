@@ -13,6 +13,7 @@
             <br />
             <button class="btn btn-primary" @onclick=btnLogin_Click>@(DataDictionary.LogIn)</button>
             <button class="btn btn-success" @onclick=btnRegister_Click>@(DataDictionary.Register)</button>
+            <button class="btn btn-danger" @onclick=btnGoogle_Click>Google</button>
             <br />
             <br />
         </div>
@@ -60,6 +61,15 @@
     }
 
     #endregion \btnRegister_Click
+
+    #region btnGoogle_Click
+
+    public async Task btnGoogle_Click()
+    {
+        NavigationManager.NavigateTo("https://localhost:7151/api/Authentications/GoogleSignIn");
+    }
+
+    #endregion \btnGoogle_Click
 
     #endregion \Events
 

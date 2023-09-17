@@ -31,13 +31,35 @@ namespace Services
 
         #region GetAllPosts
 
-        public async Task<List<Models.Post>> GetAllPostsAsync()
+        //public async Task<List<Models.Post>> GetAllPostsAsync()
+        //{
+        //    try
+        //    {
+        //        var _posts = await HttpClient.GetFromJsonAsync<List<Models.Post>>("api/Posts/GetAllPosts");
+
+        //        foreach (var post in _posts)
+        //        {
+        //            post.ImageUrl = await GetImageUrlAsync(post.ImageName);
+        //        }
+
+        //        return _posts;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var _log = new Log(ex.Message);
+        //        await LogService.AddLogAsync(_log);
+        //        await Console.Out.WriteLineAsync(ex.Message);
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        public async Task<ShowPostsViewModel> GetAllPostsAsync(int pageId = 1)
         {
             try
             {
-                var _posts = await HttpClient.GetFromJsonAsync<List<Models.Post>>("api/Posts/GetAllPosts");
+                var _posts = await HttpClient.GetFromJsonAsync<ShowPostsViewModel>(requestUri: $"api/Posts/GetAllPosts/{pageId}");
 
-                foreach (var post in _posts)
+                foreach (var post in _posts.Posts)
                 {
                     post.ImageUrl = await GetImageUrlAsync(post.ImageName);
                 }

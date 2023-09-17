@@ -1,20 +1,8 @@
 ﻿<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            @* <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" /> *@
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    @* <p>
-                    You are not authorized!
-                    <br />
-                    Please Login or Sign up
-                    </p> *@
-
-                    @* <div style="text-align:center;">
-                        <img width="300" src="/Images/not_authorized.png" />
-                    </div> *@
-
-                    @* <RedirectToLogin /> *@
 
                     <Authorization />
 

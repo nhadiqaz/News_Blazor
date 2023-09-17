@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
@@ -142,6 +145,19 @@ namespace Server.Controllers
         }
 
         #endregion \AuthenticationUpdate
+
+        // has error while get response from google application [not completed]
+        #region GoogleSignIn
+
+        [HttpGet]
+        public async Task GoogleSignIn()
+        {
+            var _scheme = GoogleDefaults.AuthenticationScheme;
+
+            await HttpContext.ChallengeAsync(_scheme, new AuthenticationProperties { RedirectUri = "https://localhost:7063/" });
+        }
+
+        #endregion \\GoogleSignIn  
 
         #endregion EndPoints
     }

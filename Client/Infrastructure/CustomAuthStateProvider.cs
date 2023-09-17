@@ -1,5 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
@@ -27,7 +29,7 @@ namespace Client.Infrastructure
 
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            AuthenticationState? _state = null; 
+            AuthenticationState? _state = null;
 
             var _token = await LocalStorageService.GetItemAsStringAsync(key: "token");
 

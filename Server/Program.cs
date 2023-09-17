@@ -1,5 +1,9 @@
 using Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Repositories;
@@ -16,6 +20,38 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Logging.AddConsole();
 
+
+#region JWT
+
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Authentication:Issuer"],
+        ValidAudience = builder.Configuration["Authentication:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"])),
+    };
+});
+
+#endregion \JWT
+
+#region Authentication
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie()
+.AddGoogle(googleOption =>
+{
+    googleOption.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    googleOption.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
+
+#endregion \Authentication
+
 #region Context
 
 builder.Services.AddDbContext<MyApplicationDbContext>(option =>
@@ -25,6 +61,7 @@ builder.Services.AddDbContext<MyApplicationDbContext>(option =>
 
 #endregion \Context
 
+
 #region Repositories
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -32,24 +69,26 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 #endregion \Repositories
 
-#region JWT
+//#region JWT
 
-builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
-{
-    option.TokenValidationParameters = new()
-    {
-        ValidateIssuer=true,
-        ValidateAudience=true,
-        ValidateIssuerSigningKey=true,
-        ValidIssuer = builder.Configuration["Authentication:Issuer"],
-        ValidAudience = builder.Configuration["Authentication:Audience"],
-        IssuerSigningKey=new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"])),
-    };
-});
+//builder.Services.AddAuthentication("Bearer").AddJwtBearer(option =>
+//{
+//    option.TokenValidationParameters = new()
+//    {
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateIssuerSigningKey = true,
+//        ValidIssuer = builder.Configuration["Authentication:Issuer"],
+//        ValidAudience = builder.Configuration["Authentication:Audience"],
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"])),
+//    };
+//});
 
-#endregion \JWT
+//#endregion \JWT
 
 #endregion \Services
+
+
 
 
 #region Ppipeline
@@ -68,10 +107,12 @@ app.UseCors(policy =>
 {
     policy.WithOrigins("https://localhost:7063/", "http://localhost:7063/")
     .AllowAnyHeader()
-    .AllowAnyOrigin()
     .AllowAnyMethod()
+    .AllowAnyOrigin()
     .WithHeaders(HeaderNames.ContentType);
 });
+
+app.UseCors("CorsSpecs");
 
 app.UseHttpsRedirection();
 

@@ -7,7 +7,7 @@
             <span class="title">آخرین مطالب</span>
         </div>
 
-        @if (Posts == null)
+        @if (ShowPostsViewModel.Posts == null)
         {
             <div>
                 Loading...
@@ -15,19 +15,34 @@
         }
         else
         {
-            @foreach (var post in Posts)
+            @foreach (var post in ShowPostsViewModel.Posts)
             {
                 <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
             }
+
+            <div class="col-md-12 text-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        @for (int i = 1; i <= ShowPostsViewModel.PageCount; i++)
+                        {
+                            var pageId = i;
+
+                            <li class="page-item @((ShowPostsViewModel.CurrentPage==pageId)?"active":"")">
+                                <a class="page-link" @onclick="()=>btnPage_Click(pageId)">@(i)</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         }
     </div>
 </div>
 
 @code {
-
     #region Variables
 
-    public List<Models.Post> Posts { get; set; }
+    // public List<Models.Post> Posts { get; set; }
+    public ShowPostsViewModel? ShowPostsViewModel { get; set; } = new();
 
     #endregion \Variables
 
@@ -37,7 +52,8 @@
     {
         try
         {
-            Posts = await PostService.GetAllPostsAsync();
+            // Posts = await PostService.GetAllPostsAsync();
+            ShowPostsViewModel = await PostService.GetAllPostsAsync(1);
         }
         catch (Exception ex)
         {
@@ -46,5 +62,14 @@
     }
 
     #endregion \OnInitialized
+
+    #region Events
+
+    public async Task btnPage_Click(int pageId)
+    {
+        ShowPostsViewModel = await PostService.GetAllPostsAsync(pageId);
+    }
+
+    #endregion \Events
 }
 

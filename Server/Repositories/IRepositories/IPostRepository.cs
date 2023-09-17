@@ -6,7 +6,8 @@ namespace Repositories
 {
     public interface IPostRepository
     {
-        Task<List<Post>> GetAllPostsAsync();
+        //Task<List<Post>> GetAllPostsAsync();
+        Task<ShowPostsViewModel> GetAllPostsAsync(int pageId);
         Task<Post> GetPostAsync(int postId);
         Task<Post> AddPostAsync(Post post);
         Task<Post> UpdatePostAsync(int postId, EditPostViewModel editPostViewModel);

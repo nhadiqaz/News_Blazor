@@ -6,7 +6,8 @@ namespace Services
 {
     public interface IPostService
     {
-        Task<List<Models.Post>> GetAllPostsAsync();
+        //Task<List<Models.Post>> GetAllPostsAsync();
+        Task<ShowPostsViewModel> GetAllPostsAsync(int pageId);
         Task<EditPostViewModel> GetPostAsync(int postId);
         Task AddPostAsync(AddPostViewModel addPostViewModel);
         Task<string> UploadImageAsync(MultipartFormDataContent content);

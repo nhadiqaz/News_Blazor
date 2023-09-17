@@ -6,6 +6,12 @@
 
 @attribute [Authorize]
 
+<style>
+    .pagination:hover #btnPage {
+        cursor: pointer;
+    }
+</style>
+
 <div class="latest-posts">
     <div class="container-fluid">
         <div class="col-md-2"></div>
@@ -20,7 +26,7 @@
     <div class="container">
         <div class="row">
             <div class="col table-responsive">
-                @if (ListOfPosts == null)
+                @if (ShowPostsViewModel.Posts == null)
                 {
                     <div>
                         Loading...
@@ -41,7 +47,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var post in ListOfPosts)
+                            @foreach (var post in ShowPostsViewModel.Posts)
                             {
                                 <tr>
                                     <td>@(_index++)</td>
@@ -69,22 +75,35 @@
     <div class="col-md-12 text-center">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">قبلی</a></li>
+                @* <li class="page-item"><a class="page-link" href="#">قبلی</a></li>
                 <li class="page-item"><a class="page-link" href="#">1</a></li>
                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                 <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">بعدی</a></li>
+                <li class="page-item"><a class="page-link" href="#">بعدی</a></li> *@
+
+                @for (int i = 1; i <= ShowPostsViewModel.PageCount; i++)
+                {
+                    var pageId = i;
+
+                    <li class="page-item @((pageId==ShowPostsViewModel.CurrentPage)?"active":"")">
+                        <a class="page-link" @onclick="()=>btnPage_Click(pageId)">@(i)</a>
+                    </li>
+                }
+
             </ul>
         </nav>
     </div>
 </div>
 
 @code {
-
     #region Variables
 
-    public List<Models.Post>? ListOfPosts { get; set; }
+    // public List<Models.Post>? ListOfPosts { get; set; }
+
+    public ShowPostsViewModel? ShowPostsViewModel { get; set; } = new();
+
     private int _index = 1;
+
     #endregion \Variables
 
     #region OnInitialized
@@ -93,7 +112,8 @@
     {
         try
         {
-            ListOfPosts = await PostService.GetAllPostsAsync();
+            // ListOfPosts = await PostService.GetAllPostsAsync();
+            ShowPostsViewModel = await PostService.GetAllPostsAsync(pageId: 1);
         }
         catch (Exception ex)
         {
@@ -133,13 +153,13 @@
 
         if (_result == true)
         {
-            var _post = ListOfPosts.Find(p => p.PostId == postId);
+            var _post = ShowPostsViewModel.Posts.Find(p => p.PostId == postId);
 
             await PostService.DeleteImageAsync(_post.ImageName);
 
             await PostService.DeletePostAsync(postId);
 
-            ListOfPosts.Remove(_post);
+            ShowPostsViewModel.Posts.Remove(_post);
 
             await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, "عملیات حدف انجام شد");
         }
@@ -148,6 +168,16 @@
     }
 
     #endregion \btnDelete_Click
+
+    #region btnPage_Click
+
+    public async Task btnPage_Click(int pageId)
+    {
+        ShowPostsViewModel = await PostService.GetAllPostsAsync(pageId);
+    }
+
+    #endregion \btnPage_Click
+
 
     #endregion \Events
 

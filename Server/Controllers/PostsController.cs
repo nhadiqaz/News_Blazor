@@ -34,14 +34,30 @@ namespace Server.Controllers
 
         #region GetAllPosts
 
-        [HttpGet]
-        public async Task<ActionResult<List<Post>>> GetAllPosts()
+        //[HttpGet]
+        //public async Task<ActionResult<List<Post>>> GetAllPosts()
+        //{
+        //    try
+        //    {
+        //        var _posts = await PostRepository.GetAllPostsAsync();
+
+        //        return Ok(_posts);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.LogCritical(ex.Message);
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        [HttpGet("{pageId}")]
+        public async Task<ActionResult<ShowPostsViewModel>> GetAllPosts(int pageId=1)
         {
             try
             {
-                var _posts = await PostRepository.GetAllPostsAsync();
+                var _showPostsViewModel = await PostRepository.GetAllPostsAsync(pageId);
 
-                return Ok(_posts);
+                return Ok(_showPostsViewModel.Posts);
             }
             catch (Exception ex)
             {
