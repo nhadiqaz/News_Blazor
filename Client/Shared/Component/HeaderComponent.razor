@@ -32,7 +32,7 @@
                                 </NotAuthorized>
                                 <Authorized>
                                     <li>
-                                        <a href="/Post/Update?userId=@context.User.FindFirst("UserId").Value">@(DataDictionary.EditProfile)</a>
+                                        <a href="/User/Update?userId=@context.User.FindFirst("UserId").Value">@(DataDictionary.EditProfile)</a>
                                     </li>
                                     <li>
                                         <a>@(context.User.FindFirst("Email").Value)</a>
@@ -68,7 +68,8 @@
                     <li><a href="#">اقتصادی</a></li>
                     <li><a href="#">انجمن</a></li>
                     <li><a href="#">گروه رسانه ای</a></li>
-                    <li><a href="/Post/Posts">خبر ها</a></li>
+                    <li><a href="/Posts">خبر ها</a></li>
+                    <li><a href="/Admin/Post/Posts">مدیریت خبر ها</a></li>
                     <li><a href="/AddLog">افزودن خطا</a></li>
                     <li><a href="/DisplayLogs"> خطا ها</a></li>
                 </ul>

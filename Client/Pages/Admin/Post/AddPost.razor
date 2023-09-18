@@ -1,11 +1,10 @@
-﻿@page "/Post/EditPost/{postId:int}"
+﻿@page "/Admin/Post/AddPost"
 
 @inject IPostService PostService
 @inject IJSRuntime Js
 @inject NavigationManager NavigationManager
 
 @attribute [Authorize]
-
 <style>
     .validation-message {
         color: red;
@@ -16,12 +15,12 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 style="text-align:center;margin-top:0px;margin-bottom:0px;">ویرایش خبر</h1>
+            <h1 style="text-align:center;margin-top:0px;margin-bottom:0px;">خبر جدید</h1>
             <hr style="border-color:black" />
             @if (Model == null)
             {
                 <div>
-                    Loading...
+                    Loading..
                 </div>
             }
             else
@@ -32,7 +31,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="@nameof(Model.Title)">@(DataDictionary.Title)</label>
-                                <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="عنوان خبر"></InputText>
+                                <InputText id="@nameof(Model.Title)" class="form-control" @bind-Value="@Model.Title" placeholder="..."></InputText>
                                 <div class="form-control-validation">
                                     <ValidationMessage For="()=>Model.Title"></ValidationMessage>
                                     <br />
@@ -49,8 +48,8 @@
                         </div>
                         <div class="col-md-12">
                             <label for="@nameof(Model.Description)">@(DataDictionary.Description)</label>
-                            @* <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="..."></InputTextArea> *@
-                            <CKEditorBlazor Id="@nameof(Model.Description)" @bind-Value="Model.Description" placeholder="..."></CKEditorBlazor>
+                            @* <InputTextArea id="@nameof(Model.Description)" class="form-control" @bind-Value="Model.Description" placeholder="شرح"></InputTextArea> *@
+                            <CKEditorBlazor Id="@nameof(Model.Description)" @bind-Value="@(Model.Description)" placeholder="..."></CKEditorBlazor>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.Description"></ValidationMessage>
                                 <br />
@@ -58,7 +57,7 @@
                         </div>
                         <div class="col-md-8">
                             <label for="@nameof(Model.Tags)">@(DataDictionary.Tags)</label>
-                            <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="کلید واژه ها(بین کلید واژه ها از خط فاصله استفاده کنید)"></InputTextArea>
+                            <InputTextArea id="@nameof(Model.Tags)" class="form-control" @bind-Value="Model.Tags" placeholder="بین کلید واژه ها از خط فاصله استفاده کنید"></InputTextArea>
                             <div class="form-control-validation">
                                 <ValidationMessage For="()=>Model.Tags"></ValidationMessage>
                                 <br />
@@ -72,7 +71,7 @@
                             </div>
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <img class="thumbnail" src="@(Model.ImageUrl)" style="height:200px;width:100%" />
+                                    <img class="thumbnail" src="@(ImageUrl)" style="height:200px;width:100%" />
 
                                     <InputFile OnChange="HandelUplodeImage"></InputFile>
                                 </div>
@@ -81,7 +80,7 @@
                     </div>
                     <div class="col-md-12">
                         <br />
-                        <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Edit)</button>
+                        <button type="submit" class="btn btn-success btn-block">@(DataDictionary.Create)</button>
                         <br />
                     </div>
                 </EditForm>
@@ -92,17 +91,10 @@
 
 @code {
 
-    #region Parameters
-
-    [Parameter]
-    public int PostId { get; set; }
-
-    #endregion \Parameters
-
     #region Variables
 
-    public EditPostViewModel? Model { get; set; }
-    // public string ImageUrl { get; set; } = "/Images/Post/Default.jpg";
+    public AddPostViewModel? Model { get; set; }
+    public string ImageUrl { get; set; } = "/Images/Post/Default.jpg";
     public IBrowserFile? ImageFile { get; set; }
 
     #endregion \Variables
@@ -113,13 +105,17 @@
     {
         try
         {
-            Model = await PostService.GetPostAsync(PostId);
+            await Task.Run(() =>
+            {
+                Model = new();
+            });
         }
         catch (Exception ex)
         {
             await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, ex.Message);
         }
     }
+
 
     #endregion \Initialized
 
@@ -131,36 +127,45 @@
     {
         try
         {
-            if (ImageFile is not null)
+            if (await PostService.IsPostExistAsync(Model.Title) == false)
             {
-                #region UploadImage
+                if (ImageFile is not null)
+                {
+                    #region UploadImage
 
-                using var _content = new MultipartFormDataContent();
+                    using var _content = new MultipartFormDataContent();
 
-                var _file = ImageFile;
+                    var _file = ImageFile;
 
-                var _fileContent = new StreamContent(_file.OpenReadStream(int.MaxValue));
-                _fileContent.Headers.ContentType = new MediaTypeHeaderValue(_file.ContentType);
+                    var _fileContent = new StreamContent(_file.OpenReadStream(int.MaxValue));
+                    _fileContent.Headers.ContentType = new MediaTypeHeaderValue(_file.ContentType);
 
-                _content.Add(
-                    content: _fileContent,
-                    name: "files",
-                    fileName: _file.Name);
+                    _content.Add(
+                        content: _fileContent,
+                        name: "files",
+                        fileName: _file.Name);
 
-                await PostService.DeleteImageAsync(Model.ImageName);
+                    var _imageName = await PostService.UploadImageAsync(_content);
 
-                var _imageName = await PostService.UploadImageAsync(_content);
+                    Model.ImageName = _imageName;
 
-                Model.ImageName = _imageName;
+                    #endregion \UploadImage
+                }
+                else
+                {
+                    Model.ImageName = "Default";
+                }
 
-                #endregion \UploadImage
+                await PostService.AddPostAsync(Model);
+
+                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "خبر با موفقیت ثبت شد");
+
+                NavigationManager.NavigateTo(uri: "/Admin/Post/Posts");
             }
-
-            await PostService.UpdatePostAsync(PostId, Model);
-
-            await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_Toastr, "خبر با موفقیت ویرایش شد");
-
-            NavigationManager.NavigateTo(uri: "/Post/Posts");
+            else
+            {
+                await Js.InvokeVoidAsync(identifier: JavaScriptMethods.ShowErrorMessage, "این عنوان خبر در سامانه ثبت شده است");
+            }
         }
         catch (Exception ex)
         {
@@ -187,7 +192,7 @@
 
         var _base64Image = Convert.ToBase64String(_buffer);
 
-        Model.ImageUrl = $"data:{_format};base64,{_base64Image}";
+        ImageUrl = $"data:{_format};base64,{_base64Image}";
 
         this.StateHasChanged();
 

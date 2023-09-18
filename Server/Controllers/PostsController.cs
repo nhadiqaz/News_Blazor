@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repositories;
 using Resources;
+using Swashbuckle.AspNetCore.Annotations;
 using ViewModels;
 
 namespace Server.Controllers
@@ -34,30 +35,40 @@ namespace Server.Controllers
 
         #region GetAllPosts
 
-        //[HttpGet]
-        //public async Task<ActionResult<List<Post>>> GetAllPosts()
-        //{
-        //    try
-        //    {
-        //        var _posts = await PostRepository.GetAllPostsAsync();
-
-        //        return Ok(_posts);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Logger.LogCritical(ex.Message);
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
-        [HttpGet("{pageId}")]
-        public async Task<ActionResult<ShowPostsViewModel>> GetAllPosts(int pageId=1)
+        [HttpGet]
+        public async Task<ActionResult<List<Post>>> GetAllPosts()
         {
             try
             {
-                var _showPostsViewModel = await PostRepository.GetAllPostsAsync(pageId);
+                var _posts = await PostRepository.GetAllPostsAsync();
 
-                return Ok(_showPostsViewModel.Posts);
+                return _posts;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet("{pageId}/{filterPostTite?}")]
+        public async Task<ActionResult<ShowPostsViewModel>> GetAllPosts(int pageId,string? filterPostTite)
+        {
+            try
+            {
+                ShowPostsViewModel _showPostsViewModel;
+
+                if (string.IsNullOrEmpty(filterPostTite))
+                {
+                    _showPostsViewModel= await PostRepository.GetAllPostsAsync(pageId);
+                }
+                else 
+                {
+                    _showPostsViewModel= await PostRepository.GetAllPostsAsync(pageId, filterPostTite);
+                }
+
+                return Ok(_showPostsViewModel);
+
             }
             catch (Exception ex)
             {

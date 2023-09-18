@@ -1,0 +1,125 @@
+﻿@page "/Posts"
+
+@inject IJSRuntime JS
+@inject IPostService PostService
+
+<style>
+    .pagination:hover #btnPage {
+        cursor: pointer;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="latest-posts">
+                <div class="container-fluid">
+                    <div class="blog-title-span">
+                        <span class="title">آخرین خبر ها</span>
+                    </div>
+
+                    @if (ShowPostsViewModel.Posts == null)
+                    {
+                        <div>
+                            Loading...
+                        </div>
+                    }
+                    else
+                    {
+                        <br />
+                        <InputText class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." />
+                        <br />
+
+                        if (ShowPostsViewModel.Posts.Any() == false)
+                        {
+                            <p>
+                                محتوایی برای نمایش یافت نشد
+                            </p>
+                        }
+                        else
+                        {
+                            @foreach (var post in ShowPostsViewModel.Posts)
+                            {
+                                <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+                            }
+
+                            @if (ShowPostsViewModel.PageCount > 1)
+                            {
+                                <div class="col-md-12 text-center">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                            @for (int i = 1; i <= ShowPostsViewModel.PageCount; i++)
+                                            {
+                                                var pageId = i;
+
+                                                <li class="page-item @((pageId==ShowPostsViewModel.CurrentPage)?"active":"")">
+                                                    <a id="btnPage" class="page-link" @onclick="()=>btnPage_Click(pageId)">@(i)</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </nav>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    #region Peroperties
+
+    public ShowPostsViewModel? ShowPostsViewModel { get; set; } = new();
+
+    #endregion \Peroperties
+
+    #region Initialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ShowPostsViewModel = await PostService.GetAllPostsAsync(1);
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync(JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, ex.Message);
+        }
+    }
+
+    #endregion \Initialized
+
+    #region Events
+
+    #region btnPage_Click
+
+    public async Task btnPage_Click(int pageId)
+    {
+        ShowPostsViewModel = await PostService.GetAllPostsAsync(pageId);
+    }
+
+    #endregion \btnPage_Click
+
+    #region txtPostTitle_Change
+
+    public async Task txtPostTitle_Change(ChangeEventArgs e)
+    {
+        try
+        {
+            var _filterPostTite = e.Value.ToString();
+
+            ShowPostsViewModel = await PostService.GetAllPostsAsync(1, _filterPostTite);
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync(JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+
+    #endregion \txtPostTitle_Change
+
+    #endregion \Events
+}

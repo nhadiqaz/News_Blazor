@@ -1,0 +1,219 @@
+﻿@page "/Admin/Post/Posts"
+
+@inject NavigationManager NavigationManager
+@inject IPostService PostService
+@inject IJSRuntime JS
+
+@attribute [Authorize]
+
+<style>
+    .pagination:hover #btnPage {
+        cursor: pointer;
+    }
+</style>
+
+<div class="latest-posts">
+    <div class="container-fluid">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="post_content text-center">
+                <button type="button" class="btn btn-success btn-block" style="border-radius:15px;" @onclick="btnCreatePost_Click">@(DataDictionary.Create_Post)</button>
+            </div>
+        </div>
+    </div>
+    <hr />
+
+    <div class="container">
+        <div class="row">
+            <div class="col table-responsive">
+                @if (ShowPostsViewModel.Posts == null)
+                {
+                    <div>
+                        Loading...
+                    </div>
+                }
+                else
+                {
+                    <InputText class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." />
+                    <br />
+
+                    if (ShowPostsViewModel.Posts.Any() == false)
+                    {
+                        <p>
+                            محتوایی برای نمایش یافت نشد
+                        </p>
+                    }
+                    else
+                    {
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@(DataDictionary.Counter)</th>
+                                    <th>@(DataDictionary.Image)</th>
+                                    <th>@(DataDictionary.Title)</th>
+                                    <th>@(DataDictionary.ShrotDescription)</th>
+                                    <th>@(DataDictionary.Tags)</th>
+                                    <th>@(DataDictionary.CreateDate)</th>
+                                    <th>@(DataDictionary.Orders)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* @foreach (var post in ShowPostsViewModel.Posts)
+                        {
+                        <tr>
+                        <td>@(_index++)</td>
+                        <td>
+                        <img src="@(post.ImageUrl)" style="width:100px;height:100px">
+                        </td>
+                        <td>@(post.Title)</td>
+                        <td>@(post.ShortDescription)</td>
+                        <td>@(post.Tags)</td>
+                        <td>@(post.CreateDate.ToShamsi())</td>
+                        <td>
+                        <button type="button" class="btn btn-info btn-block btn-sm">@(DataDictionary.Details)</button>
+                        <button type="button" class="btn btn-warning btn-block btn-sm" @onclick="()=>btnEdit_Click(post.PostId)">@(DataDictionary.Edit)</button>
+                        <button type="button" class="btn btn-danger btn-block btn-sm" @onclick="()=>btnDelete_Click(post.PostId)">@(DataDictionary.Delete)</button>
+                        </td>
+                        </tr>
+                        } *@
+                                @for (int i = 0; i < ShowPostsViewModel.Posts.Count; i++)
+                                {
+                                    var post = ShowPostsViewModel.Posts[i];
+                                    <tr>
+                                        <td>@(i + 1)</td>
+                                        <td>
+                                            <img src="@(post.ImageUrl)" style="width:100px;height:100px">
+                                        </td>
+                                        <td>@(post.Title)</td>
+                                        <td>@(post.ShortDescription)</td>
+                                        <td>@(post.Tags)</td>
+                                        <td>@(post.CreateDate.ToShamsi())</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info btn-block btn-sm">@(DataDictionary.Details)</button>
+                                            <button type="button" class="btn btn-warning btn-block btn-sm" @onclick="()=>btnEdit_Click(post.PostId)">@(DataDictionary.Edit)</button>
+                                            <button type="button" class="btn btn-danger btn-block btn-sm" @onclick="()=>btnDelete_Click(post.PostId)">@(DataDictionary.Delete)</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        @if (ShowPostsViewModel.PageCount > 1)
+                        {
+                            <div class="col-md-12 text-center">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        @for (int i = 1; i <= ShowPostsViewModel.PageCount; i++)
+                                        {
+                                            var pageId = i;
+
+                                            <li class="page-item @((pageId==ShowPostsViewModel.CurrentPage)?"active":"")">
+                                                <a id="btnPage" class="page-link" @onclick="()=>btnPage_Click(pageId)">@(i)</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </nav>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    #region Variables
+
+    public ShowPostsViewModel? ShowPostsViewModel { get; set; } = new();
+
+    #endregion \Variables
+
+    #region OnInitialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ShowPostsViewModel = await PostService.GetAllPostsAsync(1);
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync(JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, ex.Message);
+        }
+    }
+
+    #endregion \OnInitialized
+
+    #region Events
+
+    #region btnCreatePost_Click
+
+    public void btnCreatePost_Click()
+    {
+        NavigationManager.NavigateTo(uri: "/Admin/Post/AddPost");
+    }
+
+    #endregion \btnCreatePost_Click
+
+    #region btnEdit_Click
+
+    public void btnEdit_Click(int postId)
+    {
+        NavigationManager.NavigateTo(uri: $"/Admin/Post/EditPost/{postId}");
+    }
+
+    #endregion \btnEdit_Click
+
+    #region btnDelete_Click
+
+    public async Task btnDelete_Click(int postId)
+    {
+        var _result = await JS.InvokeAsync<bool>(identifier: "ShowDeleteMessage", "خبر حذف شود؟", "مایل به حذف خبر مورد نظر هستید؟");
+
+        if (_result == true)
+        {
+            var _post = ShowPostsViewModel.Posts.Find(p => p.PostId == postId);
+
+            await PostService.DeleteImageAsync(_post.ImageName);
+
+            await PostService.DeletePostAsync(postId);
+
+            ShowPostsViewModel.Posts.Remove(_post);
+
+            await JS.InvokeVoidAsync(identifier: JavaScriptMethods.ShowSuccessfullyMessage_SweetAlert, "عملیات حدف انجام شد");
+        }
+    }
+
+    #endregion \btnDelete_Click
+
+    #region btnPage_Click
+
+    public async Task btnPage_Click(int pageId)
+    {
+        ShowPostsViewModel = await PostService.GetAllPostsAsync(pageId);
+    }
+
+    #endregion \btnPage_Click
+
+    #region txtPostTitle_Change
+
+    public async Task txtPostTitle_Change(ChangeEventArgs e)
+    {
+        try
+        {
+            var _filterPostTite = e.Value.ToString();
+            ShowPostsViewModel = await PostService.GetAllPostsAsync(1, _filterPostTite);
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync(JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+
+    #endregion \txtPostTitle_Change
+
+    #endregion \Events
+
+}

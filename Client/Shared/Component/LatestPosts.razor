@@ -1,6 +1,12 @@
 ﻿@inject IPostService PostService
 @inject IJSRuntime Js
 
+<style>
+    .pagination:hover #btnPage {
+        cursor: pointer;
+    }
+</style>
+
 <div class="latest-posts">
     <div class="container-fluid">
         <div class="blog-title-span">
@@ -20,20 +26,23 @@
                 <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
             }
 
-            <div class="col-md-12 text-center">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        @for (int i = 1; i <= ShowPostsViewModel.PageCount; i++)
-                        {
-                            var pageId = i;
+            @if (ShowPostsViewModel.PageCount > 1)
+            {
+                <div class="col-md-12 text-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            @for (int i = 1; i <= ShowPostsViewModel.PageCount; i++)
+                            {
+                                var pageId = i;
 
-                            <li class="page-item @((ShowPostsViewModel.CurrentPage==pageId)?"active":"")">
-                                <a class="page-link" @onclick="()=>btnPage_Click(pageId)">@(i)</a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            </div>
+                                <li class="page-item @((ShowPostsViewModel.CurrentPage==pageId)?"active":"")">
+                                    <a id="btnPage" class="page-link" @onclick="()=>btnPage_Click(pageId)">@(i)</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            }
         }
     </div>
 </div>
@@ -41,7 +50,6 @@
 @code {
     #region Variables
 
-    // public List<Models.Post> Posts { get; set; }
     public ShowPostsViewModel? ShowPostsViewModel { get; set; } = new();
 
     #endregion \Variables
@@ -52,7 +60,6 @@
     {
         try
         {
-            // Posts = await PostService.GetAllPostsAsync();
             ShowPostsViewModel = await PostService.GetAllPostsAsync(1);
         }
         catch (Exception ex)
