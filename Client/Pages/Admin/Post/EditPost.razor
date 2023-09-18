@@ -102,7 +102,6 @@
     #region Variables
 
     public EditPostViewModel? Model { get; set; }
-    // public string ImageUrl { get; set; } = "/Images/Post/Default.jpg";
     public IBrowserFile? ImageFile { get; set; }
 
     #endregion \Variables
@@ -113,7 +112,7 @@
     {
         try
         {
-            Model = await PostService.GetPostAsync(PostId);
+            Model = await PostService.GetPostAsync_Edit(PostId);
         }
         catch (Exception ex)
         {

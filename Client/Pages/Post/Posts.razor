@@ -1,4 +1,4 @@
-﻿@page "/Posts"
+﻿@page "/Post/Posts"
 
 @inject IJSRuntime JS
 @inject IPostService PostService
@@ -27,7 +27,8 @@
                     else
                     {
                         <br />
-                        <InputText class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." />
+                        @* <InputText class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." /> *@
+                        <input type="text" class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." />
                         <br />
 
                         if (ShowPostsViewModel.Posts.Any() == false)
@@ -40,7 +41,7 @@
                         {
                             @foreach (var post in ShowPostsViewModel.Posts)
                             {
-                                <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+                                <Post PostId="@(post.PostId)" Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
                             }
 
                             @if (ShowPostsViewModel.PageCount > 1)

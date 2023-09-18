@@ -53,7 +53,7 @@ namespace Services
             }
         }
 
-        public async Task<ShowPostsViewModel> GetAllPostsAsync(int pageId = 1,string filterPostTilte="")
+        public async Task<ShowPostsViewModel> GetAllPostsAsync(int pageId = 1, string filterPostTilte = "")
         {
             try
             {
@@ -79,7 +79,30 @@ namespace Services
 
         #region GetPost
 
-        public async Task<EditPostViewModel> GetPostAsync(int postId)
+        public async Task<Models.Post> GetPostAsync(int postId)
+        {
+            try
+            {
+                var _post = await HttpClient.GetFromJsonAsync<Models.Post>(requestUri: $"api/Posts/GetPost/{postId}");
+
+                _post.ImageUrl = await GetImageUrlAsync(_post.ImageName);
+
+                return _post;
+            }
+            catch (Exception ex)
+            {
+                var _log = new Log(ex.Message);
+                await LogService.AddLogAsync(_log);
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion \GetPost
+
+        #region GetPostAsync_Edit
+
+        public async Task<EditPostViewModel> GetPostAsync_Edit(int postId)
         {
             try
             {
@@ -100,7 +123,7 @@ namespace Services
             }
         }
 
-        #endregion \GetPost
+        #endregion \GetPostAsync_Edit
 
         #region AddPost
 
@@ -307,6 +330,7 @@ namespace Services
                 throw new Exception(ex.Message);
             }
         }
+
 
         #endregion \GetImageNameAsync
 

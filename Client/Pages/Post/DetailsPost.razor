@@ -1,0 +1,94 @@
+﻿@page "/Post/DetailsPost/{PostId:int}"
+
+@inject IPostService PostService
+@inject IJSRuntime JS
+
+@if (Post is null)
+{
+    <div>
+        Loading...
+    </div>
+}
+else
+{
+    <div class="single_post">
+        <div class="container-fluid">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <div class="post_img">
+                            <img src="@(Post.ImageUrl)" alt="">
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="posts_meta text-center">
+                    <span><i class="fa fa-comment-o"></i> 25 نظر</span>
+                    <span><i class="fa fa-archive"></i> اقتصادی</span>
+                    <span><i class="fa fa-calendar"></i> @(Post.CreateDate.ToShamsi())</span>
+                </div>
+                <div class="post_content">
+                    <h4>| @(Post.Title)</h4>
+                    <p>@((MarkupString)Post.Description)</p>
+                    @* <img src="img/unnamed.jpg" alt=""> *@
+                    @* <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p> *@
+                </div>
+                <div class="comments_form">
+                    <h5>دیدگاه شما </h5>
+                    <form>
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="نام شما">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" placeholder="ایمیل">
+                            </div>
+                            <div class="col-md-12">
+                                <textarea class="form-control" placeholder="نظر شما ..."></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="text-left">
+                                    <button class="btn btn-primary">ثبت نظر</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    #region Parameters
+
+    [Parameter]
+    public int PostId { get; set; }
+
+    #endregion \Parameters
+
+    #region Peroperties
+
+    public Models.Post? Post { get; set; }
+
+    #endregion \Peroperties
+
+    #region Initialized
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            Post = await PostService.GetPostAsync(PostId);
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync(JavaScriptMethods.ShowErrorMessage, ex.Message);
+        }
+    }
+
+    #endregion \Initialized
+}

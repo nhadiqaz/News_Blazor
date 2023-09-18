@@ -34,7 +34,8 @@
                 }
                 else
                 {
-                    <InputText class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." />
+                    @* <InputText class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." /> *@
+                    <input type="text" class="form-control" style="text-align:center" @oninput="txtPostTitle_Change" placeholder="جستجوی عنوان خبر..." />
                     <br />
 
                     if (ShowPostsViewModel.Posts.Any() == false)

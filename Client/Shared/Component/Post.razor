@@ -1,6 +1,6 @@
 ﻿<div class="col-md-3">
     <div class="post-box">
-        <a href="#">
+        <a href="/Post/DetailsPost/@(PostId)">
             <figure>
                 <img src="@(ImageUrl)" alt="">
                 <figcaption class="meta-fig">
@@ -19,9 +19,9 @@
                 <p>
                     @(ShortDescription)
                 </p>
-                <div class="text-rigt">
+                @* <div class="text-rigt">
                     <a href="#">ادامه ...</a>
-                </div>
+                </div> *@
             </div>
         </a>
     </div>
@@ -31,6 +31,8 @@
 
     #region Parameters
 
+    [Parameter]
+    public int PostId { get; set; }
     [Parameter]
     public string Title { get; set; }
     [Parameter]

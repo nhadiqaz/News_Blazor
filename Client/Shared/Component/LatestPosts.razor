@@ -23,7 +23,7 @@
         {
             @foreach (var post in ShowPostsViewModel.Posts)
             {
-                <Post Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
+                <Post PostId="@(post.PostId)" Title="@(post.Title)" ShortDescription="@(post.ShortDescription)" ImageUrl="@(post.ImageUrl)" Tags="@(post.Tags)" CreateDate="@(post.CreateDate)" />
             }
 
             @if (ShowPostsViewModel.PageCount > 1)

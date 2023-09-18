@@ -107,7 +107,8 @@ namespace Repositories
             }
             catch (Exception ex)
             {
-                throw ex;
+                Logger.LogCritical(ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 

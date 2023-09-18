@@ -6,9 +6,10 @@ namespace Services
 {
     public interface IPostService
     {
+        Task<Models.Post> GetPostAsync(int postId);
         Task<List<Models.Post>> GetAllPostsAsync();
         Task<ShowPostsViewModel> GetAllPostsAsync(int pageId=1,string filterPostTite="");
-        Task<EditPostViewModel> GetPostAsync(int postId);
+        Task<EditPostViewModel> GetPostAsync_Edit(int postId);
         Task AddPostAsync(AddPostViewModel addPostViewModel);
         Task<string> UploadImageAsync(MultipartFormDataContent content);
         Task<string> GetImageUrlAsync(string imageName);
